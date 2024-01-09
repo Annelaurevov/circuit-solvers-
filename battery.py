@@ -6,7 +6,7 @@ class Battery():
     remove(self, house)
     """
 
-    def __init__(self, full_capacity, id: int, position) -> None:
+    def __init__(self, position, full_capacity, id: int) -> None:
         self.full = full_capacity
         self.capacity = full_capacity
         self.id = id
