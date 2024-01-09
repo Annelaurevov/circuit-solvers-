@@ -1,4 +1,4 @@
-class battery():
+class Battery():
     """
     Usage:
 
@@ -6,25 +6,25 @@ class battery():
     remove(self, house)
     """
 
-    def __init__(self, full_capacity, capacity, id: int) -> None:
+    def __init__(self, full_capacity, id: int, position) -> None:
         self.full = full_capacity
         self.capacity = full_capacity
-        self.list = []
         self.id = id
+        self.position = position
+        self.houses = []
 
-    def add(self, house_id: int) -> bool:
+    def add(self, house) -> bool:
         "Adds the house, after checking if there is enough capacity"
         # adds houses to the battery
         if self.capacity >= house.capacity:
             self.capacity -= house.capacity
-            self.list.append(house_id)
+            self.houses.append(house)
             return True
         else:
             return False
 
-    def remove(self, house_id: int) -> None:
+    def remove(self, house) -> None:
         # removes house from stack
-        for i, house_id in enumerate(self.list):
-            list.pop(i)
+        for i, house.id in enumerate(self.list):
+            self.houses.pop(i)
             return
-            
