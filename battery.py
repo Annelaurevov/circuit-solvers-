@@ -24,7 +24,9 @@ class Battery():
             return False
 
     def remove(self, house) -> None:
+        "Removes the selected house"
         # removes house from stack
         for i, house.id in enumerate(self.list):
             self.houses.pop(i)
             return
+            
