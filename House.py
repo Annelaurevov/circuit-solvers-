@@ -37,3 +37,9 @@ class House:
         while Hposy < posy:
             Hposy += 1
             self.path.append((Hposx, Hposy))
+
+    def get_path_length(self) -> int:
+        """Returns the length of the path"""
+        if self.path == []:
+            return 0
+        return len(self.path) - 1
