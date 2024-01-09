@@ -1,24 +1,23 @@
 class battery():
 
-    def __init__(self, full_capacity, capacity) -> None:
+    def __init__(self, full_capacity, capacity, id: int) -> None:
         self.full = full_capacity
         self.capacity = full_capacity
-        self.stack = []
+        self.list = []
+        self.id = id
 
-    def add(self, house: int, capacity_house: float) -> None:
+    def add(self, house: int) -> None:
+        "Adds the house, after checking if there is enough capacity"
         # adds houses to the battery
-        if self.capacity >= capacity_house:
-            self.capacity = self.capacity - capacity_house
-            self.stack.append(house)
+        if self.capacity >= house.capacity:
+            self.capacity -= house.capacity
+            self.list.append(house)
             return True
         else:
             return False
 
-    def pop(self, house: int) -> None:
+    def remove(self) -> None:
         # removes house from stack
-        if self.stack:
-            return self.stack.pop(house)
-        else:
-            return None
-
-    
+        for i, house in enumerate(self.list):
+            list.pop(i)
+            return
