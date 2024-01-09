@@ -18,6 +18,7 @@ class Battery():
         # adds houses to the battery
         if self.capacity >= house.capacity:
             self.capacity -= house.capacity
+            house.make_path(self.position)
             self.houses.append(house)
             return True
         else:

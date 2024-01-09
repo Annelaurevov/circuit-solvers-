@@ -5,6 +5,7 @@ import pygame
 import json
 
 file = open(r"outputs/example_output.json", 'r')
+file = open(r"test.json", 'r')
 
 
 
@@ -16,6 +17,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+GRAY = (128, 128, 128)
 
 pygame.init()
 
@@ -24,7 +26,7 @@ pygame.init()
 
 # Set the width and height of the screen [width, height]
 size = (600, 600)
-gridsize = (50, 50)
+gridsize = (60, 60)
 screen = pygame.display.set_mode(size)
 
 battery = pygame.image.load(r'images/battery.png')
@@ -51,8 +53,8 @@ def draw_on_screen(screen):
     for i in range(gridsize[0]):
 
         for j in range(gridsize[1]):
-            pygame.draw.line(screen, BLACK, [0, j*size[1]//gridsize[1]], [size[1], j*size[1]//gridsize[1]])
-            pygame.draw.line(screen, BLACK, [i*size[0]//gridsize[0], 0], [i*size[0]//gridsize[0], size[0]])
+            pygame.draw.line(screen, GRAY, [0, j*size[1]//gridsize[1]], [size[1], j*size[1]//gridsize[1]])
+            pygame.draw.line(screen, GRAY, [i*size[0]//gridsize[0], 0], [i*size[0]//gridsize[0], size[0]])
     
     for location_data in data[1:]:
         battery_location = list(map(int, location_data['location'].split(',')))
@@ -66,12 +68,12 @@ def draw_on_screen(screen):
             screen.blit(house, get_on_screen_coordinates(*house_location))
 
             cables = houses["cables"]
-        
+
             starting_point = tuple(map(int, cables[0].split(",")))
             for end_point in cables[1:]:
                 end_point = tuple(map(int, end_point.split(",")))
                 print(starting_point, end_point)
-                pygame.draw.line(screen, RED, get_on_screen_coordinates(*starting_point), get_on_screen_coordinates(*end_point), width=5)
+                pygame.draw.line(screen, RED, get_on_screen_coordinates(*starting_point), get_on_screen_coordinates(*end_point), width=2)
                 starting_point = end_point 
 
 

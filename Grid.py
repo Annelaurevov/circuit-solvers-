@@ -87,9 +87,9 @@ class Grid:
                 houses = []
                 for house in battery.houses:
                     house_data = dict()
-                    house_data["location"] = f"{house.location[0]},{house.location[1]}"
+                    house_data["location"] = f"{house.position[0]},{house.position[1]}"
                     house_data["output"] = house.capacity
-                    house_data["cables"] = house.path
+                    house_data["cables"] = [f"{x},{y}" for x,y in house.path]
                     houses.append(house_data)
                 battery_data["houses"] = houses
                 data.append(battery_data)
