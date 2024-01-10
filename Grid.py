@@ -21,6 +21,7 @@ class Grid:
         self.district = district
 
 
+
     def load_houses(self, file_path: str) -> None:
         """Load houses into class objects"""
         id = 0
@@ -28,13 +29,15 @@ class Grid:
             reader = csv.DictReader(file)
 
             for row in reader:
-                print(row)
+
                 x = int(row['x'])
                 y = int(row['y'])
                 capacity = float(row['maxoutput'])
 
                 house = House((x, y), capacity, id)
                 self.houses.append(house)
+
+
                 id += 1
 
 
@@ -46,7 +49,6 @@ class Grid:
             for row in reader:
                 position = tuple(map(int, row['positie'].split(",")))
                 capacity = float(row['capaciteit'])
-                print(position)
                 battery = Battery(position, capacity, id)
                 self.batteries.append(battery)
                 id += 1
@@ -61,8 +63,9 @@ class Grid:
             total_costs += self.battery_costs
 
         for house in self.houses:
-            for cable in house.path:
-                total_costs += self.cable_costs
+            
+            total_costs += self.cable_costs*(len(house.path) - 1)
+            
 
         return total_costs
     
@@ -74,7 +77,7 @@ class Grid:
             
             district_data = dict()
             district_data["district"] = self.district
-            district_data["costs-shared"] = self.calc_costs()
+            district_data["costs-own"] = self.calc_costs()
 
             data.append(district_data)
 
@@ -93,7 +96,7 @@ class Grid:
                     houses.append(house_data)
                 battery_data["houses"] = houses
                 data.append(battery_data)
-            print(data)
+
             json.dump(data, f, indent=4)
 
 

@@ -13,6 +13,7 @@ class House:
         self.position = position
         self.capacity = capacity
         self.path = []
+        battery = None
         self.id = id
     
     def make_path(self, position: tuple[int, int]) -> None:
