@@ -1,15 +1,25 @@
+# File containing the battery class
+
 class Battery():
     """
     Usage:
 
-    add(self, house)
-    remove(self, house)
+    __init__(position, full_capacity, battery_id)
+        
+    can_add(house) -> bool
+        checks whether a house can be added
+    
+    add(house) -> bool
+        adds house if possible
+    
+    
+    remove(house) -> removes house
     """
 
-    def __init__(self, position, full_capacity, id: int) -> None:
+    def __init__(self, position: tuple[int, int], full_capacity: float, battery_id: int):
         self.full = full_capacity
         self.capacity = full_capacity
-        self.id = id
+        self.id = battery_id
         self.position = position
         self.houses = []
 
@@ -17,11 +27,8 @@ class Battery():
         "Checks whether a house can be added"
         if self.capacity >= house.capacity:
             return True
-        
-        if self.capacity - house.capacity >= 1e-2:
-            print("Rounding error")
-            raise ValueError
         return False
+
     def add(self, house) -> bool:
         "Adds the house, after checking if there is enough capacity"
         # adds houses to the battery
@@ -43,4 +50,3 @@ class Battery():
                 self.houses.pop(i)
                 return
         raise IndexError
-            

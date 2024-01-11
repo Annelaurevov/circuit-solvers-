@@ -1,18 +1,28 @@
-from House import House
-from battery import Battery
+# File containing Grid class
+
 import csv
 import json
+from House import House
+from Battery import Battery
+
 
 class Grid:
     """
     Usage:
 
-    load_houses(house_file.csv)
-    load_batteries(battery_file.csv)
-    calc_costs(self)
-    """
+    __init__(district)
 
-    def __init__(self, district):
+    load_houses(filename)
+        loads houses into the grid
+
+    load_batteries(filename)
+        loads batteries into the grid
+
+    calc_costs() -> float
+        calculates the cost
+        """
+
+    def __init__(self, district: int):
         self.houses = []
         self.batteries = []
         self.size = 50
@@ -24,8 +34,8 @@ class Grid:
 
     def load_houses(self, file_path: str) -> None:
         """Load houses into class objects"""
-        id = 0
-        with open(file_path, 'r') as file:
+        house_id = 0
+        with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
 
             for row in reader:
@@ -34,24 +44,23 @@ class Grid:
                 y = int(row['y'])
                 capacity = float(row['maxoutput'])
 
-                house = House((x, y), capacity, id)
+                house = House((x, y), capacity, house_id)
                 self.houses.append(house)
 
-
-                id += 1
+                house_id += 1
 
 
     def load_batteries(self, file_path: str) -> None:
         """Load batteries into battery objects"""
-        id = 0
-        with open(file_path, 'r') as file:
+        battery_id = 0
+        with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 position = tuple(map(int, row['positie'].split(",")))
                 capacity = float(row['capaciteit'])
-                battery = Battery(position, capacity, id)
+                battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)
-                id += 1
+                battery_id += 1
 
 
     def calc_costs(self) -> int:
@@ -59,34 +68,31 @@ class Grid:
 
         total_costs = 0
 
-        for battery in self.batteries:
-            total_costs += self.battery_costs
+        total_costs += self.battery_costs * len(self.batteries)
 
-        for house in self.houses:
-            
+        for house in self.houses:            
             total_costs += self.cable_costs*(len(house.path) - 1)
-            
 
         return total_costs
-    
+
     def write_out(self, path):
-        "Write json file"
+        """Write json file"""
 
         with open(path, 'w', encoding='utf-8') as f:
             data = []
-            
+
             district_data = dict()
             district_data["district"] = self.district
             district_data["costs-own"] = self.calc_costs()
 
             data.append(district_data)
 
-            
+
             for battery in self.batteries:
                 battery_data = dict()
                 battery_data["location"] = f"{battery.position[0]},{battery.position[1]}"
                 battery_data["capacity"] = battery.full
-                
+
                 houses = []
                 for house in battery.houses:
                     house_data = dict()
@@ -98,8 +104,3 @@ class Grid:
                 data.append(battery_data)
 
             json.dump(data, f, indent=4)
-
-
-
-
-        

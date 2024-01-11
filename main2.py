@@ -15,7 +15,7 @@ def fill_grid(grid, house_id):
         return grid
     house = grid.houses[house_id]
     sorted_batteries = grid.batteries.copy()
-    #sorted_batteries.sort(key=lambda x: distance(house, x))
+    sorted_batteries.sort(key=lambda x: distance(house, x))
     for battery in sorted_batteries:
         if battery.can_add(house):
             print(f"house {house.id} connected to battery {battery.id}")
@@ -26,6 +26,40 @@ def fill_grid(grid, house_id):
             battery.remove(house)
     # print("Backtracking")
     # battery.remove(house)
+
+
+def switch2(grid):
+    n = len(grid.houses)
+    changes = False
+    for i in range(n-2):
+        house1 = grid.houses[i]
+        for j in range(i+1, n-1):
+            house2 = grid.houses[j]
+            if house1.battery == house2.battery:
+                continue
+            old_cost = grid.calc_costs()
+            battery1 = house1.battery
+            battery2 = house2.battery
+
+            battery1.remove(house1)
+            battery2.remove(house2)
+
+            if battery2.can_add(house1) and battery1.can_add(house2):
+                battery1.add(house2)
+                battery2.add(house1)
+                if not grid.calc_costs() < old_cost:
+                    battery1.remove(house2)
+                    battery2.remove(house1)
+                    battery1.add(house1)
+                    battery2.add(house2)
+                    
+                else:
+                    changes = True
+                    print("New cost: ", grid.calc_costs())
+            else:
+                battery1.add(house1)
+                battery2.add(house2)
+    return changes
 
 
 def switch3(grid):
@@ -85,9 +119,7 @@ def switch3(grid):
     return changes
 
 
-
-
-district = 2
+district = 3
 
 if __name__ == "__main__":
     grid = Grid(district)
@@ -96,6 +128,10 @@ if __name__ == "__main__":
     grid.houses.sort(key=lambda x: -x.capacity)
     fill_grid(grid, 0)
     print("Base solution found!")
+
+    while switch2(grid):
+        print("Switching 2s")
+
     while switch3(grid):
         print("New try")
 

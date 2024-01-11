@@ -4,7 +4,7 @@
 import pygame
 import json
 
-file = open(r"outputs/output_district-2.json", 'r')
+file = open(r"outputs/output_district-1.json", 'r')
 # file = open(r"test.json", 'r')
 
 
