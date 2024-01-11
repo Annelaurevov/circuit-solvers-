@@ -4,7 +4,7 @@
 import pygame
 import json
 
-file = open(r"outputs/output_district-1.json", 'r')
+file = open(r"outputs/output_district-2.json", 'r')
 # file = open(r"test.json", 'r')
 
 
@@ -15,13 +15,13 @@ data = json.load(file)
 BLACK = (0, 0, 0)
 
 WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
+GREEN = (0, 210, 0)
 RED = (255, 0, 0)
-GRAY = (128, 128, 128)
+GRAY = (220, 220, 220)
 BLUE = (0, 0, 255)
 PURPLE = (255, 0, 255)
-YELLOW = (255, 255, 0)
-colors = [BLUE, RED, GREEN, PURPLE, YELLOW]
+ORANGE = (255, 150, 0)
+colors = [BLUE, RED, GREEN, PURPLE, ORANGE]
 
 pygame.init()
 
@@ -29,15 +29,14 @@ pygame.init()
 
 
 # Set the width and height of the screen [width, height]
-size = (600, 600)
+size = (800, 800)
 gridsize = (60, 60)
 screen = pygame.display.set_mode(size)
 
 battery = pygame.image.load(r'images/battery.png')
 battery = pygame.transform.scale(battery, (2*size[0]//gridsize[0], 2*size[1]//gridsize[1]))
 
-
-house = pygame.image.load(r'images/house.png')
+house = pygame.image.load(r'images/house.png').convert_alpha()
 house = pygame.transform.scale(house, (2*size[0]//gridsize[0], 2*size[1]//gridsize[1]))
 
 
@@ -52,25 +51,38 @@ clock = pygame.time.Clock()
 def get_on_screen_coordinates(x, y):
     return [y * size[0]//gridsize[0], x * size[1]//gridsize[1]]
 
+def create_colored_battery(color):
+    colored_battery = pygame.Surface(battery.get_size(), pygame.SRCALPHA)
+    colored_battery.fill(color)
+    colored_battery.blit(battery, (0, 0))
+    return colored_battery
 
 def draw_on_screen(screen):
     for i in range(gridsize[0]):
-
         for j in range(gridsize[1]):
-            pygame.draw.line(screen, GRAY, [0, j*size[1]//gridsize[1]], [size[1], j*size[1]//gridsize[1]])
-            pygame.draw.line(screen, GRAY, [i*size[0]//gridsize[0], 0], [i*size[0]//gridsize[0], size[0]])
+            pygame.draw.line(screen, GRAY, [0, j * size[1] // gridsize[1]], [size[0], j * size[1] // gridsize[1]])
+            pygame.draw.line(screen, GRAY, [i * size[0] // gridsize[0], 0], [i * size[0] // gridsize[0], size[1]])
+
     id = 0
     for location_data in data[1:]:
         color = colors[id]
         id += 1
         battery_location = list(map(int, location_data['location'].split(',')))
         battery_location = [battery_location[0] - 1, battery_location[1] - 1]
-        
-        screen.blit(battery, get_on_screen_coordinates(*battery_location))
+
+        # Draw battery on top
+        screen.blit(create_colored_battery(color), get_on_screen_coordinates(*battery_location))
 
         for houses in location_data["houses"]:
             house_location = list(map(int, houses['location'].split(',')))
             house_location = [house_location[0] - 1, house_location[1] - 1]
+
+            # Draw house underlay with battery color
+            house_underlay_rect = pygame.Rect(get_on_screen_coordinates(*house_location), (size[0] // gridsize[0], size[1] // gridsize[1]))
+            pygame.draw.rect(screen, color, house_underlay_rect)
+
+            # Draw house image on top with adjusted opacity
+            house.set_alpha(128) 
             screen.blit(house, get_on_screen_coordinates(*house_location))
 
             cables = houses["cables"]
@@ -78,9 +90,15 @@ def draw_on_screen(screen):
             starting_point = tuple(map(int, cables[0].split(",")))
             for end_point in cables[1:]:
                 end_point = tuple(map(int, end_point.split(",")))
-                
-                pygame.draw.line(screen, color, get_on_screen_coordinates(*starting_point), get_on_screen_coordinates(*end_point), width=2)
-                starting_point = end_point 
+
+                pygame.draw.line(screen, color, get_on_screen_coordinates(*starting_point),
+                                 get_on_screen_coordinates(*end_point), width=2)
+
+                starting_point = end_point
+
+
+
+
 
 
 
