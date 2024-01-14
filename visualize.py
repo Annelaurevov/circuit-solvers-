@@ -1,8 +1,20 @@
 import pygame
 import json
+import sys
 
-file = open(r"outputs/output_district-2.json", 'r')
-data = json.load(file)
+if len(sys.argv) != 2:
+    print("Usage: python file.py <district_number>")
+    sys.exit(1)
+
+district_number = sys.argv[1]
+file_path = f"outputs/output_district-{district_number}.json"
+
+try:
+    file = open(file_path, 'r')
+    data = json.load(file)
+except FileNotFoundError:
+    print(f"File {file_path} not found.")
+    sys.exit(1)
  
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -15,6 +27,7 @@ ORANGE = (255, 150, 0)
 colors = [BLUE, RED, GREEN, PURPLE, ORANGE]
 
 pygame.init()
+pygame.font.init()
 
 size = (800, 800)
 gridsize = (60, 60)
@@ -22,8 +35,10 @@ screen = pygame.display.set_mode(size)
 box_width = size[0] // gridsize[0]
 box_height = size[1] // gridsize[1]
 
+font = pygame.font.Font(None, 20)
+
 pygame.display.set_caption("My Game")
-done = False
+quit = False
 clock = pygame.time.Clock()
 
 battery = pygame.image.load(r'images/battery.png')
@@ -33,13 +48,36 @@ house = pygame.image.load(r'images/house.png').convert_alpha()
 house = pygame.transform.scale(house, (1 * box_width, 1 * box_height))
 
 
+def draw_text(screen, text, color, location):
+    text_location = [location[0] - 2 * box_height, location[1] - 2 * box_width]
+
+    offsets = [(1, 1), (-1, -1), (1, -1), (-1, 1)]
+
+    for offset in offsets:
+        text_surface = font.render(text, True, color)
+        screen.blit(text_surface, (text_location[0] + offset[0], text_location[1] + offset[1]))
+
+    text_surface = font.render(text, True, WHITE)
+    screen.blit(text_surface, text_location)
+
+
+def draw_total_costs():
+    total_costs_location = get_on_screen_coordinates(-1, -1)
+
+    total_costs = "Total costs: " + str(data[0]["costs-own"])
+
+    draw_text(screen, total_costs, BLACK, total_costs_location)
+
+
 def get_on_screen_coordinates(x, y):
-    return [y * box_width, x * box_height]
+    space_x = (gridsize[0] - 50) // 2 * box_width
+    space_y = (gridsize[1] - 50) // 2 * box_width
+    return [y * box_height + space_y, x * box_width + space_x]
 
 
 def draw_grid(size, gridsize):
-    for i in range(gridsize[0]):
-        for j in range(gridsize[1]):
+    for i in range(gridsize[0] + 1):
+        for j in range(gridsize[1] + 1):
             pygame.draw.line(screen, GRAY, [0, j * box_height], [size[0], j * box_height])
             pygame.draw.line(screen, GRAY, [i * box_width, 0], [i * box_width, size[1]])
 
@@ -78,24 +116,37 @@ def draw_cables(screen, color, cables):
 def draw_all(screen):
     draw_grid(size, gridsize)
     
+    draw_total_costs()
+
     id = 0
     for location_data in data[1:]:
         color = colors[id]
         id += 1
-        
+    
         draw_battery(screen, color, tuple(map(int, location_data['location'].split(','))))
 
         for house_data in location_data["houses"]:
             draw_house(screen, color, tuple(map(int, house_data['location'].split(','))))
             draw_cables(screen, color, house_data["cables"])
 
+    id = 0
+    for location_data in data[1:]:
+        color = colors[id]
+        id += 1
+
+        battery_capacity = location_data['capacity']
+        draw_text(screen, f"Capacity: {battery_capacity}", color, get_on_screen_coordinates(*map(int, location_data['location'].split(','))))
+
+
 
 # -------- Main Program Loop -----------
-while not done:
+while not quit:
+
     # --- Main event loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            done = True
+            quit = True
+
 
     # --- Game logic should go here
 
