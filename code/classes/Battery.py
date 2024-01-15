@@ -34,7 +34,7 @@ class Battery():
         # adds houses to the battery
         if self.capacity >= house.capacity:
             self.capacity -= house.capacity
-            house.make_path(self.position)
+            # house.make_path(self.position)
             house.battery = self
             self.houses.append(house)
             return True
@@ -46,6 +46,7 @@ class Battery():
         for i, house_n in enumerate(self.houses):
             if house == house_n:
                 house.battery = None
+                house.path = [house.position]
                 self.capacity += house.capacity
                 self.houses.pop(i)
                 return

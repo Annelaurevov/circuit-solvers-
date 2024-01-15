@@ -1,10 +1,9 @@
 # File containing Grid class
+from code.classes.House import House
+from code.classes.Battery import Battery
 
 import csv
 import json
-from House import House
-from Battery import Battery
-
 
 class Grid:
     """
@@ -62,6 +61,13 @@ class Grid:
                 self.batteries.append(battery)
                 battery_id += 1
 
+    def is_filled(self):
+        for house in self.houses:
+            if house.battery is None:
+                return False
+            if house.get_path_length() == 0:
+                return False
+        return True
 
     def calc_costs(self) -> int:
         """calculate total costs"""

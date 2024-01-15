@@ -51,4 +51,3 @@ if __name__ == "__main__":
                 battery.add(house)
 
     grid.write_out("test.json")
-

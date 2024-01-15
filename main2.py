@@ -1,6 +1,6 @@
-from Grid import Grid
-from House import House
-from battery import Battery
+from code.classes.Grid import Grid
+from code.classes.House import House
+from code.classes.Battery import Battery
 from itertools import permutations
 
 def distance(object1, object2):
@@ -123,8 +123,8 @@ district = 3
 
 if __name__ == "__main__":
     grid = Grid(district)
-    grid.load_houses(r"Huizen&Batterijen/district_X/district-X_houses.csv".replace("X", str(district)))
-    grid.load_batteries(r"Huizen&Batterijen/district_X/district-X_batteries.csv".replace("X", str(district)))
+    grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
+    grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     grid.houses.sort(key=lambda x: -x.capacity)
     fill_grid(grid, 0)
     print("Base solution found!")
@@ -136,5 +136,5 @@ if __name__ == "__main__":
         print("New try")
 
 
-    grid.write_out(r"outputs/output_district-X.json".replace("X", str(district)))
+    grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
 
