@@ -28,3 +28,5 @@ Feedback:
 
 WEEK 2
 --------------------------------------------------------------------
+
+15/1 - Jens - Folder opgeschoont en classes aangepast
