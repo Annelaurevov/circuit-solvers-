@@ -61,7 +61,18 @@ class Grid:
                 self.batteries.append(battery)
                 battery_id += 1
 
-    def is_filled(self):
+    def reset(self) -> None:
+        """Resets the grid"""
+        for battery in self.batteries:
+            battery.capacity = battery.full
+            battery.houses = []
+
+
+        for house in self.houses:
+            house.path = [house.position]
+            house.battery = None
+
+    def is_filled(self) -> bool:
         for house in self.houses:
             if house.battery is None:
                 return False

@@ -30,3 +30,4 @@ WEEK 2
 --------------------------------------------------------------------
 
 15/1 - Jens - Folder opgeschoont en classes aangepast
+15/2 - Jens - Random zoek algoritme toegevoegd en data analyse hierop

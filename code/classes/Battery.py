@@ -51,3 +51,6 @@ class Battery():
                 self.houses.pop(i)
                 return
         raise IndexError
+
+    def __repr__(self) -> str:
+        return f"battery {self.id}"
