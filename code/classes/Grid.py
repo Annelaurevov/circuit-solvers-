@@ -108,7 +108,7 @@ class Grid:
             for battery in self.batteries:
                 battery_data = dict()
                 battery_data["location"] = f"{battery.position[0]},{battery.position[1]}"
-                battery_data["capacity"] = battery.full
+                battery_data["capacity"] = battery.full # TODO aan te passen ??
 
                 houses = []
                 for house in battery.houses:

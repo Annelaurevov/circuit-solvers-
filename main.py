@@ -15,6 +15,10 @@ from code.data_analyse.data_analysis import get_average, get_deviation, get_high
 from code.vizualization.visualize import visualize
 
 
+import scipy.stats as stats
+import numpy as np
+
+
 def print_progress(n, max_n):
     characters = round(50 * n / max_n)
 
@@ -51,33 +55,45 @@ if __name__ == "__main__":
 
     grid_costs = []
 
-    iterations = 1_000_00
+    iterations = 100_000
 
     lowest = 61729
 
     for i in range(iterations):
-        # print_progress(i, iterations)
+        print_progress(i, iterations)
         while not random_connect(grid):
             grid.reset()
         
-        while switch_pairs(grid):
-            #print("New cost: ", grid.calc_costs())
-            pass
+        # while switch_pairs(grid):
+        #     #print("New cost: ", grid.calc_costs())
+        #     pass
 
         if grid.calc_costs() < lowest:
             grid.write_out(r"data/outputs/output_district-X-random.json".replace("X", str(district)))
-            #print("No fucking way")
+
             lowest = grid.calc_costs()
         grid_costs.append(grid.calc_costs())
     print("Finished")
 
 
     print("Lowest cost: ", get_low(grid_costs))
-    plt.title(f"District: {district}\n n = {iterations}\nAverage = {get_average(grid_costs)} $\sigma$ = {get_deviation(grid_costs)}")
+    plt.title(f"District: {district}\n n = {iterations}\nAverage = {round(get_average(grid_costs), 2)} $\sigma$ = {round(get_deviation(grid_costs), 2)}")
     plt.xlabel("grid cost")
-    plt.hist(grid_costs)
+    plt.hist(grid_costs, bins = 100, density=True)
+
+    sigma = get_deviation(grid_costs)
+    mu = get_average(grid_costs)
+    x = np.linspace(min(grid_costs), max(grid_costs), 1000)
+    y = 1/(2*np.pi*sigma**2)**0.5 * np.exp(-1/2 * (x - mu)**2/sigma**2)
+
+    print(min(grid_costs), max(grid_costs))
+    print(f"{mu=}, {sigma=}")
+
+    plt.plot(x, y)
     plt.show()
-    
+
+    # data = [your data values]
+
         # print(grid.calc_costs())
         # grid.write_out(r"data/random_connections/output_district-X_Y.json".replace("X", str(district)).replace("Y", str(grid.calc_costs())))
 
