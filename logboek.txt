@@ -31,3 +31,6 @@ WEEK 2
 
 15/1 - Jens - Folder opgeschoont en classes aangepast
 15/2 - Jens - Random zoek algoritme toegevoegd en data analyse hierop
+16/1 - Salome - Readme
+17/1 - Salome - Statespace
+17/1 - Jens - Baseline en random experimenten

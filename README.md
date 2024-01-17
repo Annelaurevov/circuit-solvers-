@@ -26,7 +26,7 @@ Het programma kan gerund worden door aanroepen van:
 python main.py [-v] <district_number>
 ```
 
-Met -v wordt via python een visualisatie laten zien.
+Met -v wordt via pygame een visualisatie laten zien.
 
 ### Structuur
 
