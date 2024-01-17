@@ -5,8 +5,6 @@ def fill_grid_greedy(grid):
     """Tries to fill the grid with a greedy algorithm"""
     houses = grid.houses.copy()
 
-    houses_connected = 0
-
     # Sort houses by capacity in decreasing order
     houses.sort(key=lambda x: -x.capacity)
 
