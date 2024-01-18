@@ -52,14 +52,8 @@ choices = sys.argv[1:]
 
 choices = arguments(choices)
 
-needs_visualize = False
-district = None
 
-algo_greedy = False
-algo_random = False
-algo_switch = False
 
-district = choices.district
 
 # for arg in arguments:
 #     if arg == "-g":
@@ -80,27 +74,29 @@ district = choices.district
 #     if "1" <= arg <= "3":
 #         district = int(arg)
 
-if district is None:
-    print("Usage: python main.py [-v] <district_number>")
-    sys.exit(1)
+# if district is None:
+#     print("Usage: python main.py [-v] <district_number>")
+#     sys.exit(1)
 
 
 
 if __name__ == "__main__":
 
+    district = choices.district
+
+    
+    if choices.help:
+        print(choices.help_message)
+        sys.exit()
+
     grid = Grid(district)
     grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
     grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     
-
-    grid_costs = []
-
-    iterations = 10
-
-    lowest = 61729
  
     if choices.algorithm == 'random':
-
+        lowest = 10e10
+        grid_costs = []
         for i in range(choices.n):
             print_progress(i, choices.n)
             while not random_connect(grid):
@@ -108,6 +104,12 @@ if __name__ == "__main__":
 
             while choices.switches and switch_pairs(grid):
                 pass
+            if grid.calc_costs() < lowest:
+                grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+            grid_costs.append(grid.calc_costs())
+        if choices.hist:
+                plot_histogram(district, choices.n, grid_costs)
+
 
     if choices.algorithm == 'greedy':
         fill_grid_greedy(grid)
@@ -133,21 +135,7 @@ if __name__ == "__main__":
     # print("Finished")
     # print("Lowest cost: ", get_low(grid_costs))
 
-    # plot_histogram(district, iterations, grid_costs)
 
-    # data = [your data values]
-
-        # print(grid.calc_costs())
-        # grid.write_out(r"data/random_connections/output_district-X_Y.json".replace("X", str(district)).replace("Y", str(grid.calc_costs())))
-
-    # assert grid.is_filled()
-    # print("Cost = ", grid.calc_costs())
-
-    # grid.reset()
-    # fill_grid_greedy(grid)
-
-    # while switch_pairs(grid):
-    #     print("New cost: ", grid.calc_costs())
 
     assert grid.is_filled()
 
