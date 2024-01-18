@@ -14,6 +14,8 @@ from code.data_analyse.data_analysis import get_average, get_deviation, get_high
 
 from code.vizualization.visualize import visualize
 
+from code.libs.arguments import arguments
+
 
 import scipy.stats as stats
 import numpy as np
@@ -46,7 +48,9 @@ def plot_histogram(district, iterations, grid_costs):
     plt.show()
 
 
-arguments = sys.argv[1:]
+choices = sys.argv[1:]
+
+choices = arguments(choices)
 
 needs_visualize = False
 district = None
@@ -55,24 +59,26 @@ algo_greedy = False
 algo_random = False
 algo_switch = False
 
-for arg in arguments:
-    if arg == "-g":
-        print("Greedy algorithm chosen")
-        algo_greedy = True
+district = choices.district
 
-    if arg == "-r":
-        print("Random algorithm chosen")
-        algo_random = True
+# for arg in arguments:
+#     if arg == "-g":
+#         print("Greedy algorithm chosen")
+#         algo_greedy = True
 
-    if arg == "-s":
-        print("Switch algorithm chosen")
-        algo_switch = True
+#     if arg == "-r":
+#         print("Random algorithm chosen")
+#         algo_random = True
 
-    if arg == "-v":
-        needs_visualize = True
+#     if arg == "-s":
+#         print("Switch algorithm chosen")
+#         algo_switch = True
 
-    if "1" <= arg <= "3":
-        district = int(arg)
+#     if arg == "-v":
+#         needs_visualize = True
+
+#     if "1" <= arg <= "3":
+#         district = int(arg)
 
 if district is None:
     print("Usage: python main.py [-v] <district_number>")
@@ -93,36 +99,41 @@ if __name__ == "__main__":
 
     lowest = 61729
  
-    for i in range(iterations):
-        print_progress(i, iterations)
+    if choices.algorithm == 'random':
 
-        # choose way to fill grid (required)
-        if algo_greedy == True:
-            fill_grid_greedy(grid)
-
-        if algo_random == True:
+        for i in range(choices.n):
+            print_progress(i, choices.n)
             while not random_connect(grid):
                 grid.reset()
 
-        if algo_greedy == False and algo_random == False:
-            print("You must select greedy or random algirthm <-g> <-r>")
-
-        # choose optimalization algorithm
-        if algo_switch == True:
-            while switch_pairs(grid):
-                print("New cost: ", grid.calc_costs())
+            while choices.switches and switch_pairs(grid):
                 pass
 
-        if grid.calc_costs() < lowest:
-            grid.write_out(r"data/outputs/output_district-X-random.json".replace("X", str(district)))
+    if choices.algorithm == 'greedy':
+        fill_grid_greedy(grid)
+        if choices.switches:
+            while switch_pairs(grid):
+                pass
 
-            lowest = grid.calc_costs()
-        grid_costs.append(grid.calc_costs())
+        # if algo_greedy == False and algo_random == False:
+        #     print("You must select greedy or random algirthm <-g> <-r>")
 
-    print("Finished")
-    print("Lowest cost: ", get_low(grid_costs))
+        # # choose optimalization algorithm
+        # if algo_switch == True:
+        #     while switch_pairs(grid):
+        #         print("New cost: ", grid.calc_costs())
+        #         pass
 
-    plot_histogram(district, iterations, grid_costs)
+        # if grid.calc_costs() < lowest:
+        #     grid.write_out(r"data/outputs/output_district-X-random.json".replace("X", str(district)))
+
+        #     lowest = grid.calc_costs()
+        # grid_costs.append(grid.calc_costs())
+
+    # print("Finished")
+    # print("Lowest cost: ", get_low(grid_costs))
+
+    # plot_histogram(district, iterations, grid_costs)
 
     # data = [your data values]
 
@@ -142,5 +153,5 @@ if __name__ == "__main__":
 
     grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
 
-    if needs_visualize:
+    if choices.visualize:
         visualize(district)
