@@ -10,6 +10,7 @@ from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 
 from code.algoritmen.not_named_yet import run_alg
+from code.algoritmen.dijkstra import run_dijkstra
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
@@ -55,33 +56,6 @@ choices = sys.argv[1:]
 choices = arguments(choices)
 
 
-
-
-# for arg in arguments:
-#     if arg == "-g":
-#         print("Greedy algorithm chosen")
-#         algo_greedy = True
-
-#     if arg == "-r":
-#         print("Random algorithm chosen")
-#         algo_random = True
-
-#     if arg == "-s":
-#         print("Switch algorithm chosen")
-#         algo_switch = True
-
-#     if arg == "-v":
-#         needs_visualize = True
-
-#     if "1" <= arg <= "3":
-#         district = int(arg)
-
-# if district is None:
-#     print("Usage: python main.py [-v] <district_number>")
-#     sys.exit(1)
-
-
-
 if __name__ == "__main__":
 
     district = choices.district
@@ -92,8 +66,8 @@ if __name__ == "__main__":
         sys.exit()
 
     grid = Grid(district)
-    grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
-    grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
+    # grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
+    # grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     
  
     if choices.algorithm == 'random':
@@ -118,30 +92,22 @@ if __name__ == "__main__":
         if choices.switches:
             while switch_pairs(grid):
                 pass
+        print("Finished -g")
 
-        # if algo_greedy == False and algo_random == False:
-        #     print("You must select greedy or random algirthm <-g> <-r>")
+    
+    grid.read_in(f"data/outputs/output_district-{district}-random2.json")
+    print("####")
+    print(len(grid.houses))
+    for house in grid.houses:
+        print(f"House {house.id} has battery {house.battery.id}")
+    for battery in grid.batteries:
+        print(f"Battery {battery.id} has {len(battery.houses)}")
+    print("####")
+    run_dijkstra(grid)
 
-        # # choose optimalization algorithm
-        # if algo_switch == True:
-        #     while switch_pairs(grid):
-        #         print("New cost: ", grid.calc_costs())
-        #         pass
+    assert grid.is_filled()
 
-        # if grid.calc_costs() < lowest:
-        #     grid.write_out(r"data/outputs/output_district-X-random.json".replace("X", str(district)))
-
-        #     lowest = grid.calc_costs()
-        # grid_costs.append(grid.calc_costs())
-
-    # print("Finished")
-    # print("Lowest cost: ", get_low(grid_costs))
-
-    run_alg(grid)
-
-    # assert grid.is_filled()
-
-    grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+    grid.write_out(f"data/outputs/output_district-{district}.json")
 
     if choices.visualize:
         visualize(district)

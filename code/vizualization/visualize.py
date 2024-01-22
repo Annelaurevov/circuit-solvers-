@@ -1,13 +1,8 @@
-
+import os
 import json
 import sys
-
-# if len(sys.argv) != 2:
-#     print("Usage: python file.py <district_number>")
-#     sys.exit(1)
-
-
-
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
 
 
 BLACK = (0, 0, 0)
@@ -27,12 +22,8 @@ box_width = size[0] // gridsize[0]
 box_height = size[1] // gridsize[1]
 
 
-
-
-
-
 def visualize(district_number: int):
-    import pygame
+    
     pygame.init()
     pygame.font.init()
     screen = pygame.display.set_mode(size)

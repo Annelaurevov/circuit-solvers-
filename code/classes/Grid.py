@@ -75,9 +75,11 @@ class Grid:
     def is_filled(self) -> bool:
         for house in self.houses:
             if house.battery is None:
+                print(f"House {house.id} without battery")
                 return False
-            if house.get_path_length() == 0:
-                return False
+            # if house.get_path_length() == 0:
+            #     print(f"House {house.id} has no path")
+            #     return False
         return True
 
     def calc_costs(self) -> int:
@@ -108,7 +110,7 @@ class Grid:
             for battery in self.batteries:
                 battery_data = dict()
                 battery_data["location"] = f"{battery.position[0]},{battery.position[1]}"
-                battery_data["capacity"] = battery.full # TODO aan te passen ??
+                battery_data["capacity"] = battery.full
 
                 houses = []
                 for house in battery.houses:
@@ -121,3 +123,31 @@ class Grid:
                 data.append(battery_data)
 
             json.dump(data, f, indent=4)
+
+    def read_in(self, path):
+        file = open(path, 'r')
+        data = json.load(file)
+        battery_id = 0
+        house_id = 0
+        for location_data in data[1:]:
+            
+            position = tuple(map(int, location_data['location'].split(',')))
+            capacity = location_data["capacity"]
+            battery = Battery(position, capacity, battery_id)
+            
+            battery_id += 1
+            print(f"{len(location_data['houses'])=}")
+            for house_data in location_data["houses"]:
+                
+                position = tuple(map(int, house_data['location'].split(',')))
+                house = House(position, house_data["output"], house_id)
+                house_id += 1
+                house.path = []
+                for cable in house_data["cables"]:
+                    house.path.append(tuple(map(int, cable.split(","))))
+
+                house.battery = battery
+                battery.houses.append(house)
+
+                self.houses.append(house)
+            self.batteries.append(battery)

@@ -9,8 +9,6 @@ from code.algoritmen.fill_grid import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 
-from code.algoritmen.not_named_yet import run_alg
-
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
 
@@ -56,32 +54,6 @@ choices = arguments(choices)
 
 
 
-
-# for arg in arguments:
-#     if arg == "-g":
-#         print("Greedy algorithm chosen")
-#         algo_greedy = True
-
-#     if arg == "-r":
-#         print("Random algorithm chosen")
-#         algo_random = True
-
-#     if arg == "-s":
-#         print("Switch algorithm chosen")
-#         algo_switch = True
-
-#     if arg == "-v":
-#         needs_visualize = True
-
-#     if "1" <= arg <= "3":
-#         district = int(arg)
-
-# if district is None:
-#     print("Usage: python main.py [-v] <district_number>")
-#     sys.exit(1)
-
-
-
 if __name__ == "__main__":
 
     district = choices.district
@@ -119,27 +91,8 @@ if __name__ == "__main__":
             while switch_pairs(grid):
                 pass
 
-        # if algo_greedy == False and algo_random == False:
-        #     print("You must select greedy or random algirthm <-g> <-r>")
 
-        # # choose optimalization algorithm
-        # if algo_switch == True:
-        #     while switch_pairs(grid):
-        #         print("New cost: ", grid.calc_costs())
-        #         pass
-
-        # if grid.calc_costs() < lowest:
-        #     grid.write_out(r"data/outputs/output_district-X-random.json".replace("X", str(district)))
-
-        #     lowest = grid.calc_costs()
-        # grid_costs.append(grid.calc_costs())
-
-    # print("Finished")
-    # print("Lowest cost: ", get_low(grid_costs))
-
-    run_alg(grid)
-
-    # assert grid.is_filled()
+    assert grid.is_filled()
 
     grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
 

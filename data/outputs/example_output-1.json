@@ -1,0 +1,56 @@
+[
+    {
+        "district": 1,
+        "costs-own": 50000
+    },
+    {
+        "location": "38,12",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "43,13",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "42,3",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "49,23",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "3,45",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "38,12",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "43,13",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "42,3",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "49,23",
+        "capacity": 1507.0,
+        "houses": []
+    },
+    {
+        "location": "3,45",
+        "capacity": 1507.0,
+        "houses": []
+    }
+]
