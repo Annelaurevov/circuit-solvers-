@@ -24,12 +24,12 @@ def run_A_star(grid):
     
     houses = battery.houses
     found = [False for house in houses]
-    
+
     for house in houses:
         nodes.append(Node(None, house.position))
 
     for node in nodes:
-
+        
     
 
 
