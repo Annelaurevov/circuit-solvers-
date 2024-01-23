@@ -9,6 +9,8 @@ from code.algoritmen.fill_grid import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 
+from code.algoritmen.depth_first import run_depth_first
+
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
 
@@ -53,7 +55,6 @@ choices = sys.argv[1:]
 choices = arguments(choices)
 
 
-
 if __name__ == "__main__":
 
     district = choices.district
@@ -64,8 +65,8 @@ if __name__ == "__main__":
         sys.exit()
 
     grid = Grid(district)
-    grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
-    grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
+    # grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
+    # grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     
  
     if choices.algorithm == 'random':
@@ -90,11 +91,21 @@ if __name__ == "__main__":
         if choices.switches:
             while switch_pairs(grid):
                 pass
+        print("Finished -g")
 
+    
+    grid.read_in(f"data/outputs/output_district-{district}-random2.json")
+    print("####")
+    print(len(grid.houses))
+    for house in grid.houses:
+        print(f"House {house.id} has battery {house.battery.id}")
+    for battery in grid.batteries:
+        print(f"Battery {battery.id} has {len(battery.houses)}")
+    print("####")
+    
+    run_depth_first(grid)
 
-    assert grid.is_filled()
-
-    grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+    grid.write_out(f"data/outputs/output_district-{district}.json")
 
     if choices.visualize:
         visualize(district)
