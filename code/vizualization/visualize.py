@@ -1,9 +1,9 @@
-import os
 import json
 import sys
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import pygame
 
+# if len(sys.argv) != 2:
+#     print("Usage: python file.py <district_number>")
+#     sys.exit(1)
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -22,8 +22,9 @@ box_width = size[0] // gridsize[0]
 box_height = size[1] // gridsize[1]
 
 
+
 def visualize(district_number: int):
-    
+    import pygame
     pygame.init()
     pygame.font.init()
     screen = pygame.display.set_mode(size)
@@ -40,8 +41,10 @@ def visualize(district_number: int):
     house = pygame.image.load(r'data/images/house.png').convert_alpha()
     house = pygame.transform.scale(house, (1 * box_width, 1 * box_height))
     file_path = f"data/outputs/output_district-{district_number}.json"
-    quit = False
+    quit = False 
 
+    def draw_selected_location(screen, color, position):
+        pygame.draw.circle(screen, color, position, 10)  # Adjust the radius as needed
 
 
     def draw_text(screen, text, color, location):
@@ -57,18 +60,21 @@ def visualize(district_number: int):
         screen.blit(text_surface, text_location)
 
 
-    def draw_total_costs():
+    def draw_legenda():
+        # draw total total cost of grid
         total_costs_location = get_on_screen_coordinates(-1, -1)
 
         total_costs = "Total costs: " + str(data[0]["costs-own"])
 
         draw_text(screen, total_costs, BLACK, total_costs_location)
-
+        
+        # draw total of houses and batteries 
+        
 
     def get_on_screen_coordinates(x, y):
         space_x = (gridsize[0] - 50) // 2 * box_width
         space_y = (gridsize[1] - 50) // 2 * box_width
-        return [y * box_height + space_y, x * box_width + space_x]
+        return (y * box_height + space_y, x * box_width + space_x)
 
 
     def draw_grid(size, gridsize):
@@ -82,12 +88,13 @@ def visualize(district_number: int):
         battery_location = [location[0] - 1, location[1] - 2]
 
         battery_underlay_rect = pygame.Rect(get_on_screen_coordinates(*battery_location), (2 * box_width, 2 * box_height))
+
         pygame.draw.rect(screen, color, battery_underlay_rect)
 
         battery.set_alpha(130)
         screen.blit(battery, get_on_screen_coordinates(*battery_location))
-
-
+    
+            
     def draw_house(screen, color, location):
         house_location = [location[0] - 0.5, location[1] - 0.5]
 
@@ -107,20 +114,38 @@ def visualize(district_number: int):
                             get_on_screen_coordinates(*end_point), width=2)
 
             starting_point = end_point
+    
+    def check_battery(location):
+        coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
+        lengte = len(coordinates)
+
+      
+        return any(
+            coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and
+            coordinates[i][1] - 26 < location[1] <= coordinates[i][1]
+            for i in range(len(coordinates))
+        )
+    
+    def check_which_battery(location):
+        coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
+        lengte = len(coordinates)
+
+        for i in range(lengte):
+            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0]:
+                return i + 1
 
 
     def draw_all(screen):
         draw_grid(size, gridsize)
         
-        draw_total_costs()
+        draw_legenda()
 
         id = 0
         for location_data in data[1:]:
             color = colors[id]
             id += 1
-        
             draw_battery(screen, color, tuple(map(int, location_data['location'].split(','))))
-
+           
             for house_data in location_data["houses"]:
                 draw_house(screen, color, tuple(map(int, house_data['location'].split(','))))
                 draw_cables(screen, color, house_data["cables"])
@@ -130,11 +155,9 @@ def visualize(district_number: int):
             color = colors[id]
             id += 1
 
-            battery_capacity = location_data['capacity']
-            draw_text(screen, f"Capacity: {battery_capacity}", color, get_on_screen_coordinates(*map(int, location_data['location'].split(','))))
+           
 
-
-
+    
     try:
         file = open(file_path, 'r')
         data = json.load(file)
@@ -143,8 +166,7 @@ def visualize(district_number: int):
         sys.exit(1)
     # -------- Main Program Loop -----------
     while not quit:
-
-        # --- Main event loop
+    # --- Main event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit = True
@@ -153,20 +175,30 @@ def visualize(district_number: int):
         # --- Game logic should go here
 
         # --- Screen-clearing code goes here
-
-        # Here, we clear the screen to white. Don't put other drawing commands
-        # above this, or they will be erased with this command.
-
-        # If you want a background image, replace this clear with blit'ing the
-        # background image.
         screen.fill(WHITE)
 
         # --- Drawing code should go here
         draw_all(screen)
 
+        # Get the current mouse position
+        mouse_position = pygame.mouse.get_pos()
+
+
+        # Draw a red circle at the mouse position
+        draw_selected_location(screen, BLACK, mouse_position)
+        
+        if check_battery(mouse_position) == True:
+            pygame.draw.circle(screen, GREEN, mouse_position, 10)  # Adjust the radius as needed
+
+            selected_battery = check_which_battery(mouse_position)
+            draw_text(screen, "Battery: " + str(selected_battery), BLACK, mouse_position)
+            draw_text(screen, "capacity: " + str(data[selected_battery]["capacity"]), BLACK, (mouse_position[0], mouse_position[1]+ 10))
+
+
+
         # --- Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
-
+        
         # --- Limit to 60 frames per second
         clock.tick(60)
 
