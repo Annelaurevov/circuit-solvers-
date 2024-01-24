@@ -1,127 +1,128 @@
 from code.algoritmen.manhattan_path import manhattan_path as path
 from code.algoritmen.manhattan_path import distance as battery_distance
 from typing import List, Any
+import heapq
+from itertools import combinations
 
 
-def battery_costs(battery, grid) -> int:
-
-    total_costs = grid.battery_costs
-    cable_costs = grid.cable_costs
-
-    for house in battery.houses:            
-        total_costs += cable_costs*(len(house.path) - 1)
-
-    return total_costs
+def run_depth_first(grid, max_branches):
 
 
-def update_paths(main_houses, battery):
-    for main_house in main_houses:
-        main_house.path = path(main_house.position, battery.position)
+    def battery_costs(battery, grid) -> int:
+        """
+        calculates costs per battery section
+        """
 
-    remaining_houses = [house for house in battery.houses if house not in main_houses]
+        total_costs = grid.battery_costs
+        cable_costs = grid.cable_costs
 
-    for other_house in remaining_houses:
-        other_house.path = path(other_house.position, battery.position)
-        len_battery_path = len(other_house.path)
-        potential_paths = []
+        for house in battery.houses:            
+            total_costs += cable_costs*(len(house.path) - 1)
 
-        for main_house_temp in main_houses:
-            for cable in main_house_temp.path:
-                len_cable_path = len(path(other_house.position, cable))
-
-                if len_cable_path < len_battery_path:
-                    new_path = path(other_house.position, cable)
-                    potential_paths.append(new_path)
-                else:
-                    potential_paths.append(other_house.path)
-
-        best_path = min(potential_paths, key=len)
-        other_house.path = best_path
+        return total_costs
 
 
-def depth_first_search_recursive(main_houses, battery, grid, max_depth, current_depth, current_configuration):
-    if current_depth > max_depth:
-        return {}, float('inf')  
+    def update_paths(main_houses, battery):
+        """
+        updates the path of the non_main-houses from battery to find the shortest cable length: battery or main branch
+        """
 
-    best_configurations = {}
-    lowest_costs = float('inf')
+        for main_house in main_houses:
+            main_house.path = path(main_house.position, battery.position)
 
-    for main_house in main_houses:
-        remaining_main_houses = [house for house in main_houses if house != main_house]
+        #print("Main Houses:")
+        #for main_house in main_houses:
+            #print(f"House {main_house.id} at position {main_house.position}")
 
-        update_paths([main_house], battery)
+        remaining_houses = [house for house in battery.houses if house not in main_houses]
 
+        for other_house in remaining_houses:
+            other_house.path = path(other_house.position, battery.position)
+            len_battery_path = len(other_house.path)
+            potential_paths = []
+
+            for main_house_temp in main_houses:
+                for cable in main_house_temp.path:
+                    len_cable_path = len(path(other_house.position, cable))
+
+                    if len_cable_path < len_battery_path:
+                        new_path = path(other_house.position, cable)
+                        potential_paths.append(new_path)
+                    else:
+                        potential_paths.append(other_house.path)
+
+            best_path = min(potential_paths, key=len)
+            other_house.path = best_path
+
+
+    def add_config_costs(main_houses, battery, grid, config_heap):
+        """
+        Adds the configuration and its costs to the heap.
+        """
+        config = tuple(house.id for house in main_houses)
         costs = battery_costs(battery, grid)
-
-        if costs < lowest_costs:
-            best_configuration = current_configuration + [main_house.id]
-            lowest_costs = costs
-
-            remaining_best_configurations, remaining_lowest_costs = depth_first_search_recursive(
-                remaining_main_houses, battery, grid, max_depth, current_depth + 1, best_configuration
-            )
-
-            if remaining_lowest_costs < lowest_costs:
-                best_configurations = remaining_best_configurations
-                lowest_costs = remaining_lowest_costs
-            else:
-                best_configurations[lowest_costs] = best_configuration
-
-    return best_configurations, lowest_costs
+        config_cost = (costs, config)
+        heapq.heappush(config_heap, config_cost)
 
 
-def save_best_config(best_configurations, battery, results_dict):
-    battery_id = battery.id
 
-    if battery_id not in results_dict:
-        results_dict[battery_id] = {}
+    def find_cheapest(config_heap):
+        if not config_heap:
+            return None
 
-    for cost, configuration in best_configurations.items():
-        results_dict[battery_id][cost] = configuration
-
-
-def give_best_config(results_dict, grid):
-    for battery_idx, (battery_id, cost_dict) in enumerate(results_dict.items()):
-        lowest_cost = float('inf')
-        best_configuration = []
-
-        for cost, configuration in cost_dict.items():
-            if cost < lowest_cost:
-                lowest_cost = cost
-                best_configuration = configuration
-
-        battery = grid.batteries[battery_idx]
-        main_houses = [house for house in battery.houses if house.id in best_configuration]
-
-        update_paths(main_houses, battery)
+        cheapest_config = heapq.heappop(config_heap)
+        return cheapest_config[1]
 
 
-def run_depth_first(grid, max_depth):
-    results_dict = {}
 
-    for current_depth in range(1, max_depth + 1):
-        for battery in grid.batteries:
-            print(f"Exploring depth-first search for battery {battery.id} with max_depth={current_depth}...")
-
-            best_configurations, lowest_costs = depth_first_search_recursive(
-                battery.houses, battery, grid, current_depth, 1, []
-            )
-            save_best_config(best_configurations, battery, results_dict)
-
-            print(f"Best configurations for battery {battery.id} at depth {current_depth}: {best_configurations}, Lowest costs: {lowest_costs}")
-
-    give_best_config(results_dict, grid)
-
-    print("Real costs: " + str(grid.calc_costs()))
-
-    print_results_dict(results_dict)
+    def generate_combinations(objects, max_branches):
+        all_combinations = []
+        for r in range(1, max_branches + 1):
+            combinations_at_depth = list(combinations(objects, r))
+            all_combinations.extend(combinations_at_depth)
+        return all_combinations
 
 
-def print_results_dict(results_dict):
-    print("Results Dictionary:")
-    for battery_id, cost_dict in results_dict.items():
-        print(f"Battery {battery_id}:")
-        for cost, configuration in cost_dict.items():
-            print(f"  Cost: {cost}, Configuration: {configuration}")
+    for battery in grid.batteries:
+
+        config_heap = []
+        
+        houses = generate_combinations(battery.houses, max_branches)
+
+        for combination in houses:
+            update_paths(combination, battery)
+            add_config_costs(combination, battery, grid, config_heap)
+
+
+        cheapest_config = find_cheapest(config_heap)
+        print(cheapest_config)
+
+        if cheapest_config:
+            print("Cheapest Configuration:", cheapest_config)
+            print("Price: " + str(config_heap[0][0]))
+
+        best_houses = []
+
+        for value in cheapest_config:
+            for house in battery.houses:
+                if value == house.id:
+                    best_houses.append(house)
+
+        if best_houses:
+            update_paths(best_houses, battery)
+            print("Houses updated")
+        else:
+            print("No matching houses found")
+                
+        update_paths(best_houses, battery)
+        print("House updated")
+        
+    
+
+
+
+
+
+
 
 
