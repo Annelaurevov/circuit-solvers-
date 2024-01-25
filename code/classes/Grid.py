@@ -136,7 +136,7 @@ class Grid:
             battery = Battery(position, capacity, battery_id)
             
             battery_id += 1
-            print(f"{len(location_data['houses'])=}")
+
             for house_data in location_data["houses"]:
                 
                 position = tuple(map(int, house_data['location'].split(',')))

@@ -10,7 +10,7 @@ from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 
 from code.algoritmen.not_named_yet import run_alg
-from code.algoritmen.dijkstra import run_dijkstra
+from code.algoritmen.dijkstra import run_dijkstra, dijkstra_from_battery
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
@@ -96,14 +96,10 @@ if __name__ == "__main__":
 
     
     grid.read_in(f"data/outputs/output_district-{district}-random2.json")
-    print("####")
-    print(len(grid.houses))
-    for house in grid.houses:
-        print(f"House {house.id} has battery {house.battery.id}")
-    for battery in grid.batteries:
-        print(f"Battery {battery.id} has {len(battery.houses)}")
-    print("####")
-    run_dijkstra(grid)
+
+ #     run_dijkstra(grid)
+    dijkstra_from_battery(grid)
+
 
     assert grid.is_filled()
 
