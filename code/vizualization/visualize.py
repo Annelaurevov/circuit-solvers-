@@ -1,4 +1,3 @@
-from ast import Tuple
 import json
 import sys
 
@@ -49,7 +48,7 @@ def visualize(district_number: int) -> None:
         """
         pygame.draw.circle(screen, color, position, 10)  
     
-    def draw_text(screen: pygame.Surface, text: str, color: Tuple[int, int, int], location: Tuple[int, int]) -> None:
+    def draw_text(screen: pygame.Surface, text: str, color, location) -> None:
         """
         Draw text on the screen with a shadow effect.
 
@@ -88,7 +87,7 @@ def visualize(district_number: int) -> None:
         # draw total of houses and batteries 
         
 
-    def get_on_screen_coordinates(x: int, y: int) -> Tuple[int, int]:
+    def get_on_screen_coordinates(x: int, y: int) -> [int, int]:
         """
         Convert grid coordinates to on-screen pixel coordinates.
 
@@ -101,7 +100,7 @@ def visualize(district_number: int) -> None:
         return (y * box_height + space_y, x * box_width + space_x)
 
 
-    def draw_grid(size: Tuple[int, int], gridsize: Tuple[int, int]) -> None:
+    def draw_grid(size, gridsize) -> None:
         """
         Draw the grid lines on the screen.
 
@@ -115,7 +114,7 @@ def visualize(district_number: int) -> None:
                 pygame.draw.line(screen, GRAY, [i * box_width, 0], [i * box_width, size[1]])
 
 
-    def draw_battery(screen: pygame.Surface, color: Tuple[int, int, int], location: Tuple[int, int]) -> None:
+    def draw_battery(screen: pygame.Surface, color, location) -> None:
         """
         Draw a battery on the screen.
 
@@ -134,7 +133,7 @@ def visualize(district_number: int) -> None:
         screen.blit(battery, get_on_screen_coordinates(*battery_location))
     
             
-    def draw_house(screen: pygame.Surface, color: Tuple[int, int, int], location: Tuple[int, int]) -> None:
+    def draw_house(screen: pygame.Surface, color, location) -> None:
         """
         Draw a house on the screen.
 
@@ -152,7 +151,7 @@ def visualize(district_number: int) -> None:
         screen.blit(house, get_on_screen_coordinates(*house_location))
 
 
-    def draw_cables(screen: pygame.Surface, color: Tuple[int, int, int], cables: List[str]) -> None:
+    def draw_cables(screen: pygame.Surface, color, cables) -> None:
         """
         Draw cables connecting houses to batteries on the screen.
 
@@ -170,7 +169,7 @@ def visualize(district_number: int) -> None:
 
             starting_point = end_point
     
-    def check_battery(location: Tuple[int, int]) -> bool:
+    def check_battery(location) -> bool:
         """
         Check if the mouse is over a battery.
 
@@ -231,7 +230,7 @@ def visualize(district_number: int) -> None:
 
         return total_output
         
-    def check_which_battery(location: Tuple[int, int]) -> int:
+    def check_which_battery(location) -> int:
         """
         Determine which battery the mouse is over.
 
@@ -269,7 +268,7 @@ def visualize(district_number: int) -> None:
             color = colors[id]
             id += 1
 
-    def draw_selected_battery(screen: pygame.Surface, selected_battery: int, selected_battery_location: Tuple[int, int]) -> None:
+    def draw_selected_battery(screen: pygame.Surface, selected_battery: int, selected_battery_location) -> None:
         """
         Draws the selected battery, associated houses, and information about the battery on the screen.
 
@@ -338,3 +337,4 @@ def visualize(district_number: int) -> None:
         clock.tick(60)
 
     pygame.quit()
+
