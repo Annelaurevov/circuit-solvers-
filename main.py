@@ -8,6 +8,7 @@ from code.classes.Battery import Battery
 from code.algoritmen.fill_grid import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
+from code.algoritmen.breath_first_greedy import breath_first_greedy
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
@@ -19,12 +20,14 @@ from code.libs.arguments import arguments
 
 import scipy.stats as stats
 import numpy as np
+import heapq
 
 
 def print_progress(n, max_n):
     characters = round(50 * n / max_n)
 
     print("Progress: ["+"#"*characters + " "*(50 - characters) + "]", end='\r')
+
 
 if len(sys.argv) == 1:
     print("Usage: python main.py [-v] <district_number>")
@@ -48,16 +51,63 @@ def plot_histogram(district, iterations, grid_costs):
     plt.show()
 
 
+def print_final_costs(costs):
+    text = "Final cost " + str(costs)
+    print("-" * len(text))
+    print(text)
+    print("-" * len(text))
+
+
+def start_random(grid, choices, district):
+    lowest = float('inf')
+    grid_costs = []
+
+    for i in range(choices.n):
+        print_progress(i, choices.n)
+        
+        while not random_connect(grid):
+            grid.reset()
+
+        while choices.switches and switch_pairs(grid):
+            pass
+        
+        if choices.breath:
+            breath_first_greedy(grid, choices.m)
+
+        current_cost = grid.calc_costs()
+        heapq.heappush(grid_costs, current_cost)
+        if current_cost < lowest:
+            lowest = current_cost
+            grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+
+    if choices.hist:
+        plot_histogram(district, choices.n, grid_costs)
+
+    print_final_costs(grid_costs[0])
+
+
+def start_greedy(grid, choices, district):
+    fill_grid_greedy(grid)
+
+    if choices.switches:
+        while switch_pairs(grid):
+            pass
+
+    if choices.breath:
+        breath_first_greedy(grid, choices.m)
+
+    grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+    print_final_costs(grid.calc_costs())
+
+
+
 choices = sys.argv[1:]
-
 choices = arguments(choices)
-
 
 
 if __name__ == "__main__":
 
     district = choices.district
-
     
     if choices.help:
         print(choices.help_message)
@@ -69,32 +119,13 @@ if __name__ == "__main__":
     
  
     if choices.algorithm == 'random':
-        lowest = 10e10
-        grid_costs = []
-        for i in range(choices.n):
-            print_progress(i, choices.n)
-            while not random_connect(grid):
-                grid.reset()
-
-            while choices.switches and switch_pairs(grid):
-                pass
-            if grid.calc_costs() < lowest:
-                grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
-            grid_costs.append(grid.calc_costs())
-        if choices.hist:
-                plot_histogram(district, choices.n, grid_costs)
+        start_random(grid, choices, district)
 
 
     if choices.algorithm == 'greedy':
-        fill_grid_greedy(grid)
-        if choices.switches:
-            while switch_pairs(grid):
-                pass
-
+        start_greedy(grid, choices, district)
 
     assert grid.is_filled()
-
-    grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
 
     if choices.visualize:
         visualize(district)

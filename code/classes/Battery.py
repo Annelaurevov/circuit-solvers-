@@ -1,6 +1,6 @@
 # File containing the battery class
 
-class Battery():
+class Battery:
     """
     Usage:
 
