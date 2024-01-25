@@ -38,7 +38,7 @@ def visualize(district_number: int) -> None:
     file_path = f"data/outputs/output_district-{district_number}.json"
     quit = False 
 
-    def draw_selected_location(screen: pygame.Surface, color, position: Tuple[int, int]) -> None:
+    def draw_selected_location(screen: pygame.Surface, color, position) -> None:
         """
         Draw a colored circle at a specified position on the screen.
 
