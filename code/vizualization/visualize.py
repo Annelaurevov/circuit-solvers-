@@ -198,7 +198,7 @@ def visualize(district_number: int):
         """
         coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
         for i in range(len(coordinates)):
-            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0]:
+            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
                 return i + 1
 
 
@@ -229,6 +229,16 @@ def visualize(district_number: int):
             id += 1
 
     def draw_selected_battery(screen, selected_battery, selected_battery_location):
+        """
+        Draws the selected battery, associated houses, and information about the battery on the screen.
+
+        Args:
+            screen: Pygame screen surface to draw on.
+            selected_battery: The ID of the selected battery.
+            selected_battery_location: The location of the selected battery on the grid. 
+                It can be either a tuple of integers (x, y) or a string representing a tuple.
+        """
+        
         draw_legenda()
         
         color = colors[selected_battery - 1]
