@@ -34,3 +34,11 @@ def distance(object1, object2):
     x1, y1 = object1.position
     x2, y2 = object2.position
     return abs(x1-x2) + abs(y1 - y2)
+
+def keep_unique_paths(battery):
+    for house1 in battery.houses:
+        for house2 in battery.houses:
+            if house1 != house2:
+                intersection = list(set(house1.path) & set(house2.path))
+                if len(intersection) >= 2:
+                    house2.path = house2.path[:(len(house2.path) - len(intersection) + 1)]

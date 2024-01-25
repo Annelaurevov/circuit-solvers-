@@ -1,4 +1,5 @@
 from code.algoritmen.manhattan_path import manhattan_path as path
+from code.algoritmen.manhattan_path import keep_unique_paths
 from code.algoritmen.manhattan_path import distance as battery_distance
 from typing import List, Any, Tuple
 import heapq
@@ -6,6 +7,14 @@ from itertools import combinations
 from code.classes.House import House
 from code.classes.Battery import Battery
 from code.classes.Grid import Grid
+
+def keep_unique_paths(battery):
+    for house1 in battery.houses:
+        for house2 in battery.houses:
+            if house1 != house2:
+                intersection = list(set(house1.path) & set(house2.path))
+                if len(intersection) >= 2:
+                    house2.path = house2.path[:(len(house2.path) - len(intersection) + 1)]
 
 
 def battery_costs(battery: Battery, grid: Grid) -> int:
@@ -108,9 +117,16 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
 
         for combination in houses:
             update_paths(combination, battery)
+
+            keep_unique_paths(battery)
+
             add_config_costs(combination, battery, grid, config_heap)
 
         give_best_config(config_heap, battery)
+
+        keep_unique_paths(battery)
+
+        
 
 
 
