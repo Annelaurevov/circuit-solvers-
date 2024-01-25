@@ -103,7 +103,7 @@ if __name__ == "__main__":
         print(f"Battery {battery.id} has {len(battery.houses)}")
     print("####")
     
-    run_depth_first(grid, 10)
+    breath_first_greedy(grid, 1)
 
 
     grid.write_out(f"data/outputs/output_district-{district}.json")
