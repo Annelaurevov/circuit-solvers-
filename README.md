@@ -51,7 +51,7 @@ Usage: python [option] [district]
 ### **Stap 2:** Kies
 - wel of niet **`-s`** 
 
-## **Stap 3:** Kies één
+### **Stap 3:** Kies één
 - **`-b (-m <main branches>)`** of **`-d`**
 
 ### **Stap 4:** Kies welke
