@@ -1,6 +1,5 @@
 import sys
 from typing import List
-
 import matplotlib.pyplot as plt
 import numpy as np
 import heapq
@@ -17,212 +16,206 @@ from code.algoritmen.breath_first_greedy import breath_first_greedy
 from code.algoritmen.dijkstra import dijkstra_from_battery
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
-
 from code.vizualization.visualize import visualize
-
 from code.libs.arguments import arguments
 
 
-def print_progress(n: int, max_n: int) -> None:
-    """
-    Print progress bar for itarations during random algorithm
-    """
-    characters = round(50 * n / max_n)
-    print(f"Progress: [{'#' * characters}{' ' * (50 - characters)}]", end='\r')
+class AlgorithmRunner:
+    def __init__(self, grid: Grid, choices: Choices, district: int):
+        self.grid = grid
+        self.choices = choices
+        self.district = district
 
 
-def plot_histogram(district: int, iterations: int, grid_costs: List[float]) -> None:
-    """
-    Plot histogram
-    """
-    plt.title(f"District: {district}\n n = {iterations}\nAverage = {round(np.mean(grid_costs), 2)} $\sigma$ = {round(np.std(grid_costs), 2)}")
-    plt.xlabel("grid cost")
-    plt.hist(grid_costs, bins=100, density=True)
+    def print_progress(self, n: int, max_n: int) -> None:
+        """
+        Print progress bar for iterations during the random algorithm
+        """
+        characters = round(50 * n / max_n)
+        progress_bar = f"Progress: [{'#' * characters}{' ' * (50 - characters)}]"
 
-    sigma = np.std(grid_costs)
-    mu = np.mean(grid_costs)
-    x = np.linspace(min(grid_costs), max(grid_costs), 1000)
-    y = 1 / (2 * np.pi * sigma ** 2) ** 0.5 * np.exp(-1 / 2 * (x - mu) ** 2 / sigma ** 2)
-
-    print(min(grid_costs), max(grid_costs))
-    print(f"{mu=}, {sigma=}")
-
-    plt.plot(x, y)
-    plt.show()
+        if n == max_n - 1:
+            progress_bar = f"Progress: [{'#' * 50}]"
+            progress_bar += "\n"
+        
+        sys.stdout.write('\r' + progress_bar)
+        sys.stdout.flush()
 
 
-def print_final_costs(costs: float) -> None:
-    """
-    Print final costs
-    """
-    text = f"Final cost {costs}"
-    print("-" * len(text))
-    print(text)
-    print("-" * len(text))
-    print()
+
+    def plot_histogram(self, grid_costs: List[float]) -> None:
+        """
+        Plot histogram
+        """
+        plt.title(
+            f"District: {self.district}\n"
+            f"n = {self.choices.n}\n"
+            f"Average = {round(np.mean(grid_costs), 2)} "
+            f"$\sigma$ = {round(np.std(grid_costs), 2)}"
+        )
+
+        plt.xlabel("grid cost")
+        plt.hist(grid_costs, bins=100, density=True)
+
+        sigma = np.std(grid_costs)
+        mu = np.mean(grid_costs)
+        x = np.linspace(min(grid_costs), max(grid_costs), 1000)
+        y = 1 / (2 * np.pi * sigma ** 2) ** 0.5 * np.exp(-1 / 2 * (x - mu) ** 2 / sigma ** 2)
+
+        print(min(grid_costs), max(grid_costs))
+        print(f"{mu=}, {sigma=}")
+
+        plt.plot(x, y)
+        plt.show()
 
 
-def load_structures(grid: Grid, district: int) -> None:
-    """
-    Load structures into the grid
-    """
-    grid.load_houses(f"data/district_{district}/district-{district}_houses.csv")
-    grid.load_batteries(f"data/district_{district}/district-{district}_batteries.csv")
+    def print_final_costs(self, costs: float) -> None:
+        """
+        Print final costs
+        """
+        text = f"Final cost {costs}"
+        print("-" * len(text))
+        print(text)
+        print("-" * len(text))
+        print()
 
 
-def breath_or_dijkstra(grid: Grid, choices: Choices) -> None:
-    """
-    Apply either breath-first greedy or Dijkstra's algorithm based on choices
-    Prints out desired text
-    """
-    if choices.breath:
-        breath_first_greedy(grid, choices.m)
-    elif choices.dijkstra:
-        dijkstra_from_battery(grid)
+    def load_structures(self) -> None:
+        """
+        Load structures into the grid
+        """
+        self.grid.load_houses(f"data/district_{self.district}/district-{self.district}_houses.csv")
+        self.grid.load_batteries(f"data/district_{self.district}/district-{self.district}_batteries.csv")
 
 
-def print_random_algo_text(choices: Choices) -> None:
-    """
-    Print random-related text
-    """
-    print("\n- filling grid with random algorithm")
-    if choices.switches:
-        print("- optimizing filled grid with switch pairs algorithm")
+    def breath_or_dijkstra(self) -> None:
+        """
+        Apply either breath-first greedy or Dijkstra's algorithm based on choices
+        Prints out desired text
+        """
+        if self.choices.breath:
+            breath_first_greedy(self.grid, self.choices.m)
+        elif self.choices.dijkstra:
+            dijkstra_from_battery(self.grid)
 
-    if choices.n == 1:
-        if choices.breath:
+
+    def print_algorithm_text(self) -> None:
+        """
+        Print text related to a specific algorithm type
+        """
+        # Start with the filling of the grid
+        if self.choices.algorithm not in ["greedy", "random"]:
+            print("\n- filling grid with existing output")
+            if self.choices.filename:
+                print("- using file: '" + self.choices.filename.lstrip("-") + "'")
+            else:
+                print("- using previous run output")
+        else:
+            print(f"\n- filling grid with " + self.choices.algorithm + " algorithm")
+
+        # Print specific text for random with iterations
+        if self.choices.n != 1 and self.choices.algorithm == "random":
+            print("- using " + str(self.choices.n) + " iterations")
+
+            if self.choices.switches:
+                print("- optimizing each iteration with switch pairs algorithm")
+
+            if self.choices.breath:
+                print("- optimizing each iteration with breath first greedy")
+                print(f"- using {self.choices.m} main {'branch' if self.choices.m == 1 else 'branches'}")
+            elif self.choices.dijkstra:
+                print("- optimizing each iteration with dijkstra")
+                
+            print("- finding lowest cost")
+            if self.choices.hist:
+                print("- showing histogram plot")
+
+            if len(self.choices.output) != 0:
+                print("- saving output as: '" + self.choices.output + "'")
+
+            return 
+
+        # Generic options
+        if self.choices.switches:
+            print("- optimizing filled grid with switch pairs algorithm")
+
+        if self.choices.breath:
             print("- optimizing filled grid with breath first greedy")
-            print(f"- using {choices.m} main {'branch' if choices.m == 1 else 'branches'}")
-        elif choices.dijkstra:
+            print(f"- using {self.choices.m} main {'branch' if self.choices.m == 1 else 'branches'}")
+        elif self.choices.dijkstra:
             print("- optimizing filled grid with dijkstra")
-    else:
-        print("- using " + str(choices.n) + " iterations")
-        
-        if choices.breath:
-            print("- optimizing each iteration with breath first greedy")
-            print(f"- using {choices.m} main {'branch' if choices.m == 1 else 'branches'}")
-        elif choices.dijkstra:
-            print("- optimizing each iteration with dijkstra")
-        
-        print("- finding lowest cost")
-        if choices.hist:
-            print("- showing histogram plot")
-
-    if len(choices.output) != 0:
-        print("- saving output as: '" + choices.output + "'")
+            
+        if len(self.choices.output) != 0:
+            print("- saving output as: '" + self.choices.output + "'")
 
 
-def print_greedy_algo_text(choices: Choices) -> None:
-    """
-    Print greedy-related text
-    """
-    print("\n- filling grid with greedy algorithm")
+    def start_random(self) -> None:
+        """
+        Start with random algorithm
+        """
+        self.print_algorithm_text()
+        self.load_structures()
 
-    if choices.switches:
-        print("- optimizing grid with switch pairs algorithm")
-        
-    if choices.breath:
-        print("- optimizing filled grid with breath first greedy")
-        print(f"- using {choices.m} main {'branch' if choices.m == 1 else 'branches'}")
-    elif choices.dijkstra:
-        print("- optimizing filled grid with dijkstra")
-        
-    if len(choices.output) != 0:
-        print("- saving output as: '" + choices.output + "'")
+        lowest = float('inf')
+        grid_costs = []
 
+        for i in range(self.choices.n):
+            if self.choices.n != 1:
+                self.print_progress(i, self.choices.n)
 
-def print_input_algo_text(choices: Choices) -> None:
-    """
-    Print input-related text
-    """
-    print("\n- grid filled with existing output")
-    if choices.filename:
-        print("- using file: '" + choices.filename.lstrip("-") + "'")
-    else:
-        print("- using previous run output")
+            while not random_connect(self.grid):
+                self.grid.reset()
 
-    if choices.switches:
-        print("- optimizing grid with switch pairs algorithm")
+            while self.choices.switches and switch_pairs(self.grid):
+                pass
 
-    if choices.breath:
-        print("- optimizing filled grid with breath first greedy")
-        print(f"- using {choices.m} main {'branch' if choices.m == 1 else 'branches'}")
-    elif choices.dijkstra:
-        print("- optimizing filled grid with dijkstra")
-        
-    if len(choices.output) != 0:
-        print("- saving output as: '" + choices.output + "'")
+            self.breath_or_dijkstra()
 
+            current_cost = self.grid.calc_costs()
+            heapq.heappush(grid_costs, current_cost)
+            if current_cost < lowest:
+                lowest = current_cost
+                self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
 
-def start_random(grid: Grid, choices: Choices, district: int) -> None:
-    """
-    Sart with random algorithm
-    """
-    load_structures(grid, district)
-    print_random_algo_text(choices)
+        if self.choices.hist:
+            self.plot_histogram(grid_costs)
 
-    lowest = float('inf')
-    grid_costs = []
+        self.print_final_costs(grid_costs[0])
 
-    for i in range(choices.n):
-        if choices.n != 1:
-            print_progress(i, choices.n)
+    def start_greedy(self) -> None:
+        """
+        Start with greedy algorithm
+        """
+        self.print_algorithm_text()
+        self.load_structures()
+        fill_grid_greedy(self.grid)
 
-        while not random_connect(grid):
-            grid.reset()
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
 
-        while choices.switches and switch_pairs(grid):
-            pass
+        self.breath_or_dijkstra()
 
-        breath_or_dijkstra(grid, choices)
+        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.print_final_costs(self.grid.calc_costs())
 
-        current_cost = grid.calc_costs()
-        heapq.heappush(grid_costs, current_cost)
-        if current_cost < lowest:
-            lowest = current_cost
-            grid.write_out(f"data/outputs/output_district-{district}.json")
+    def start_with_input(self) -> None:
+        """
+        Start with existing output as input for chosen
+        """
+        self.print_algorithm_text()
+        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
 
-    if choices.hist:
-        plot_histogram(district, choices.n, grid_costs)
+        assert self.grid.is_filled()
 
-    print_final_costs(grid_costs[0])
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
 
+        self.breath_or_dijkstra()
 
-
-def start_greedy(grid: Grid, choices: Choices, district: int) -> None:
-    """
-    Start with greedy algorithm
-    """
-    load_structures(grid, district)
-    fill_grid_greedy(grid)
-
-    if choices.switches:
-        while switch_pairs(grid):
-            pass
-
-    breath_or_dijkstra(grid, choices)
-
-    grid.write_out(f"data/outputs/output_district-{district}.json")
-    print_final_costs(grid.calc_costs())
-
-
-def start_with_input(grid: Grid, choices: Choices, district: int) -> None:
-    """
-    Start with existing output as input for chosen
-    """
-    print_input_algo_text(choices)
-    grid.read_in(f"data/outputs/output_district-{district}{choices.filename}.json")
-
-    assert grid.is_filled()
-
-    if choices.switches:
-        while switch_pairs(grid):
-            pass
-
-    breath_or_dijkstra(grid, choices)
-
-    grid.write_out(f"data/outputs/output_district-{district}.json")
-    print_final_costs(grid.calc_costs())
+        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.print_final_costs(self.grid.calc_costs())
 
 
 if __name__ == "__main__":
@@ -242,14 +235,15 @@ if __name__ == "__main__":
         sys.exit()
 
     # Runs desired algorithm(s)
+    runner = AlgorithmRunner(grid, choices, district)
     if choices.algorithm == 'random':
-        start_random(grid, choices, district)
+        runner.start_random()
 
     if choices.algorithm == 'greedy':
-        start_greedy(grid, choices, district)
+        runner.start_greedy()
 
     if choices.algorithm == 'file':
-        start_with_input(grid, choices, district)
+        runner.start_with_input()
 
     assert grid.is_filled()
 
