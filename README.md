@@ -45,16 +45,19 @@ Usage: python [option] [district]
         -h          Shows this message
 ```
 
-### **Stap 1:** Kies uit
+### **Stap 1:** Kies één
 - **`'-g'`** of **`'-r' ('-n' <iterations>)`** of **`'-i' ('-f' <name>)`**
 
-### **Stap 2:** Kies uit
-- kies **`-s`** en/of **`-b (-m <main branches>)`** of **`-d`**
+### **Stap 2:** Kies
+- wel of niet **`-s`** 
 
-### **Stap 3:** Kies uit
+## **Stap 3:** Kies één
+- **`-b (-m <main branches>)`** of **`-d`**
+
+### **Stap 4:** Kies welke
 - **`-o <name>`** en/of **`-v`** en/of **`-p`**
 
-### **Stap 4:** Kies district nummer
+### **Stap 5:** Kies één district nummer
 - **`[1-3]`**
 
 ### **Help:**
