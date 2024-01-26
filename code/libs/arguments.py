@@ -1,21 +1,41 @@
+import sys
+
 class Choices:
     def __init__(self):
         self.algorithm = None
-        self.visualize = False
-        self.hist = False
+        self.filename = ""
         self.n = 1
         self.switches = False
+        self.breath = False
+        self.m = 1
+        self.dijkstra = False
+        self.output = ""
+        self.visualize = False
+        self.hist = False
         self.district = None
         self.help = False
 
         self.help_message = """
         Usage: python [option] [district]
 
-        -g          Selects the greedy algorithm
-        -r          Selects the random algotithm
-        -n          Selects how many times the random algorithm should be used
+        -g          Selects the greedy algorithm to fill grid
+        -r          Selects the random algorithm to fill grid
+        -i          Selects existing file output as input to fill grid, default: most recent
+
+        -f <name>   Selects a different specified filename for '-i'
+        -n <int>    Selects the amount of iterations for the random algorithm '-r'
+        -s          Selects the switches algorithm after a filled grid
+
+        -b          Selects the breath-first greedy algorithm after a filled grid
+        -m <int>    Selects an amount <1-5> of main branches breath_first_greedy uses '-b'
+        -d          Selects the Dijkstra algorithm after a filled grid
+
+        -o <name>   Give name for the output file 
+        
+        -v          Visualizes the result with pygame
+        -p          Shows a histogram of random iterations [-r -n <amount>]
+
         -h          Shows this message
-        -v          Visualizes the result
         """
 
 
@@ -23,10 +43,16 @@ def arguments(args):
     choices = Choices()
 
     if "-h" in args:
-        choices.help = True
+        print(choices.help_message)
+        sys.exit()
+        return
 
-    if "-r" in args and "-g" in args:
-        raise SyntaxError
+    if args.count("-r") + args.count("-g") + args.count("-i") != 1:
+        raise SyntaxError("Exactly one of -r, -g, or -i should be selected")
+
+    if "-g" in args:
+        choices.algorithm = "greedy"
+
     if "-r" in args:
         choices.algorithm = "random"
         if "-n" in args:
@@ -37,11 +63,33 @@ def arguments(args):
                 raise ValueError
             if "-p" in args:
                 choices.hist = True
-    if "-g" in args:
-        choices.algorithm = "greedy"
+
+    if "-i" in args:
+        choices.algorithm = "file"
+        if args.index("-i") < len(args) - 1 and args[args.index("-i") + 1] == "-f":
+            choices.filename = "-" + args[args.index("-f") + 1]
 
     if "-s" in args:
         choices.switches = True
+
+    if "-b" in args and "-d" in args:
+        raise SyntaxError("Choose one of -b or -d or none")
+
+    if "-b" in args:
+        choices.breath = True
+        if "-m" in args:
+            main_branches = args[args.index("-m") + 1]
+            try:
+                choices.m = int(main_branches)
+                assert 1 <= choices.m <= 5, "Number of branches should be between 1 and 5."
+            except ValueError:
+                raise ValueError
+
+    if "-d" in args:
+        choices.dijkstra = True
+
+    if "-o" in args:
+        choices.output = args[args.index("-o") + 1]
 
     if "-v" in args:
         choices.visualize = True
@@ -53,3 +101,4 @@ def arguments(args):
         raise ValueError
 
     return choices
+

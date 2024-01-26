@@ -1,8 +1,12 @@
 from code.algoritmen.manhattan_path import manhattan_path as path
+from code.algoritmen.manhattan_path import keep_unique_paths
 from code.algoritmen.manhattan_path import distance as battery_distance
-from typing import List, Any
+from typing import List, Any, Tuple
 import heapq
 from itertools import combinations
+from code.classes.House import House
+from code.classes.Battery import Battery
+from code.classes.Grid import Grid
 
 
 def battery_costs(battery: Battery, grid: Grid) -> int:
@@ -64,7 +68,7 @@ def find_cheapest(config_heap: List[Tuple[int, Tuple[int, ...]]]) -> Tuple[int, 
         return tuple()
 
     cheapest_config = heapq.heappop(config_heap)
-    return cheapest_config[1]
+    return cheapest_config
 
 
 def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[Any, ...]]:
@@ -78,17 +82,25 @@ def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[A
     return all_combinations
 
 
+def print_progress(battery: Battery, cheapest_config: int) -> None:
+    """
+    Prints progress when cheapest config for a battery is found
+    """
+    if cheapest_config:
+        print("Battery: " + str(battery.id + 1))
+        print("Cheapest house configuration:", ' & '.join(str(id) for id in cheapest_config[1]))
+        print("Price:", cheapest_config[0] + "\n")
+
+
 def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Battery) -> None:
     """
     Finds the last best configuration and updates it accordingly
     """
     cheapest_config = find_cheapest(config_heap)
 
-    if cheapest_config:
-        print("Cheapest Configuration:", cheapest_config)
-        print("Price:", config_heap[0][0])
+    # print_progress(battery, cheapest_config)    
 
-    best_houses = [house for house in battery.houses if house.id in cheapest_config]
+    best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)
 
 
@@ -96,6 +108,7 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
     """
     Runs the alogrithm
     """
+
     for battery in grid.batteries:
         config_heap = []
         
@@ -103,9 +116,14 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
 
         for combination in houses:
             update_paths(combination, battery)
+            keep_unique_paths(battery)
             add_config_costs(combination, battery, grid, config_heap)
 
         give_best_config(config_heap, battery)
+
+        keep_unique_paths(battery)
+
+        
 
 
 

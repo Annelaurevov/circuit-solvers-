@@ -9,10 +9,9 @@ from code.algoritmen.fill_grid import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 
-from code.algoritmen.depth_first import run_depth_first
+from code.algoritmen.breath_first_greedy import breath_first_greedy
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
-
 
 from code.vizualization.visualize import visualize
 
@@ -65,10 +64,12 @@ if __name__ == "__main__":
         sys.exit()
 
     grid = Grid(district)
-    # grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
-    # grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
+    grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
+    grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     
- 
+    
+    grid.reset()
+
     if choices.algorithm == 'random':
         lowest = 10e10
         grid_costs = []
@@ -107,6 +108,8 @@ if __name__ == "__main__":
 
 
     grid.write_out(f"data/outputs/output_district-{district}.json")
+
+    assert grid.is_filled()
 
     if choices.visualize:
         visualize(district)

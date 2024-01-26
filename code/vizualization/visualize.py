@@ -19,7 +19,7 @@ box_height = size[1] // gridsize[1]
 
 
 
-def visualize(district_number: int):
+def visualize(district_number: int) -> None:
     import pygame
     pygame.init()
     pygame.font.init()
@@ -37,7 +37,7 @@ def visualize(district_number: int):
     file_path = f"data/outputs/output_district-{district_number}.json"
     quit = False 
 
-    def draw_selected_location(screen, color, position):
+    def draw_selected_location(screen: pygame.Surface, color, position) -> None:
         """
         Draw a colored circle at a specified position on the screen.
 
@@ -48,7 +48,7 @@ def visualize(district_number: int):
         """
         pygame.draw.circle(screen, color, position, 10)  
     
-    def draw_text(screen, text, color, location):
+    def draw_text(screen: pygame.Surface, text: str, color, location) -> None:
         """
         Draw text on the screen with a shadow effect.
 
@@ -70,37 +70,37 @@ def visualize(district_number: int):
         screen.blit(text_surface, text_location)
 
 
-    def draw_legenda():
+    def draw_legenda() -> None:
         """
         Draw legend information on the screen.
         """
+        # draw district 
+        district_location = get_on_screen_coordinates(-2,-1)
+        district = "District: " + str(data[0]["district"])
         # draw total total cost of grid
         total_costs_location = get_on_screen_coordinates(-1, -1)
-
         total_costs = "Total costs: " + str(data[0]["costs-own"])
 
+        draw_text(screen, district, BLACK, district_location)
         draw_text(screen, total_costs, BLACK, total_costs_location)
         
         # draw total of houses and batteries 
         
 
-    def get_on_screen_coordinates(x, y):
+    def get_on_screen_coordinates(x: int, y: int) -> [int, int]:
         """
         Convert grid coordinates to on-screen pixel coordinates.
 
         Args:
         - x (int): X-coordinate in the grid.
         - y (int): Y-coordinate in the grid.
-
-        Returns:
-        Tuple (x, y): On-screen pixel coordinates.
         """
         space_x = (gridsize[0] - 50) // 2 * box_width
         space_y = (gridsize[1] - 50) // 2 * box_width
         return (y * box_height + space_y, x * box_width + space_x)
 
 
-    def draw_grid(size, gridsize):
+    def draw_grid(size, gridsize) -> None:
         """
         Draw the grid lines on the screen.
 
@@ -114,7 +114,7 @@ def visualize(district_number: int):
                 pygame.draw.line(screen, GRAY, [i * box_width, 0], [i * box_width, size[1]])
 
 
-    def draw_battery(screen, color, location):
+    def draw_battery(screen: pygame.Surface, color, location) -> None:
         """
         Draw a battery on the screen.
 
@@ -133,7 +133,7 @@ def visualize(district_number: int):
         screen.blit(battery, get_on_screen_coordinates(*battery_location))
     
             
-    def draw_house(screen, color, location):
+    def draw_house(screen: pygame.Surface, color, location) -> None:
         """
         Draw a house on the screen.
 
@@ -151,7 +151,7 @@ def visualize(district_number: int):
         screen.blit(house, get_on_screen_coordinates(*house_location))
 
 
-    def draw_cables(screen, color, cables):
+    def draw_cables(screen: pygame.Surface, color, cables) -> None:
         """
         Draw cables connecting houses to batteries on the screen.
 
@@ -169,7 +169,7 @@ def visualize(district_number: int):
 
             starting_point = end_point
     
-    def check_battery(location):
+    def check_battery(location) -> bool:
         """
         Check if the mouse is over a battery.
 
@@ -186,24 +186,68 @@ def visualize(district_number: int):
             for i in range(len(coordinates))
         )
     
-    def check_which_battery(location):
+    def calc_cost_battery(selected_battery: int) -> int:
+        """
+        Calculate the total cost associated with the selected battery.
+
+        Args:
+            selected_battery: The ID of the selected battery. 
+
+        Notes:
+            - This function computes the total cost, which includes a base cost and additional costs based on connected houses' cables.
+            - The base cost is calculated as 5000 * 5, assuming a fixed price for each battery and a total of 5 batteries.
+            - Additional costs are calculated based on the length of cables connected to each house. 
+            Each unit length of cable incurs a cost of 9.
+        """
+        total_cost = 0
+
+        # TODO: change if we try advanced 
+        # total_costs = price batteries * amount of batteries
+        total_cost += 5000 * 5
+
+        for house_data in data[selected_battery]["houses"]:
+            #print(len(house_data['cables']) - 1)
+            total_cost += 9 *(len(house_data['cables']) - 1)
+
+        return total_cost
+    
+    def calc_output_battery(selected_battery: int) -> float:
+        """
+        Calculate the total output power associated with the selected battery.
+
+        Args:
+            selected_battery: The ID of the selected battery.
+        
+        Notes:
+            - This function computes the total output power provided by the selected battery based on connected houses.
+            - It sums up the output power of each connected house.
+        """
+        total_output = 0
+        
+        for house_data in data[selected_battery]["houses"]:
+            house_output = house_data.get("output", 0)  
+            total_output += float(house_output)
+
+        return total_output
+        
+    def check_which_battery(location) -> int:
         """
         Determine which battery the mouse is over.
 
         Args:
         - location: Tuple (x, y) specifying the mouse position.
-
-        Returns:
-        int: Index of the battery (1-indexed) if over a battery, None otherwise.
         """
         coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
         for i in range(len(coordinates)):
+<<<<<<< HEAD
             if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and \
                 coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
+=======
+            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
+>>>>>>> 61809058d2102d74de49cfdfb3c03950f8525ade
                 return i + 1
 
-
-    def draw_all(screen):
+    def draw_all(screen: pygame.Surface) -> None:
         """
         Draw the entire smart grid on the screen.
 
@@ -229,7 +273,17 @@ def visualize(district_number: int):
             color = colors[id]
             id += 1
 
-    def draw_selected_battery(screen, selected_battery, selected_battery_location):
+    def draw_selected_battery(screen: pygame.Surface, selected_battery: int, selected_battery_location) -> None:
+        """
+        Draws the selected battery, associated houses, and information about the battery on the screen.
+
+        Args:
+            screen: Pygame screen surface to draw on.
+            selected_battery: The ID of the selected battery.
+            selected_battery_location: The location of the selected battery on the grid. 
+                It can be either a tuple of integers (x, y) or a string representing a tuple.
+        """
+        
         draw_legenda()
         
         color = colors[selected_battery - 1]
@@ -247,7 +301,8 @@ def visualize(district_number: int):
         
         pygame.draw.circle(screen, color_selected_battery, mouse_position, 10)  
         draw_text(screen, "Battery: " + str(selected_battery), BLACK, mouse_position)
-        draw_text(screen, "capacity: " + str(data[selected_battery]["capacity"]), BLACK, (mouse_position[0], mouse_position[1]+ 10))
+        draw_text(screen, "ouput: " + str(int(calc_output_battery(selected_battery))), BLACK, (mouse_position[0], mouse_position[1]+13))
+        draw_text(screen, "Cost: " + str(calc_cost_battery(selected_battery)), BLACK, (mouse_position[0], mouse_position[1]+ 26))
 
         
     try:
@@ -256,25 +311,17 @@ def visualize(district_number: int):
     except FileNotFoundError:
         print(f"File {file_path} not found.")
         sys.exit(1)
-    # -------- Main Program Loop -----------
     while not quit:
-    # --- Main event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit = True
 
-
-        # --- Game logic should go here
-
-        # --- Screen-clearing code goes here
         screen.fill(WHITE)
 
-        # --- Drawing code should go here
         draw_all(screen)
 
         # Get the current mouse position
         mouse_position = pygame.mouse.get_pos()
-
 
         # Draw a red circle at the mouse position
         draw_selected_location(screen, BLACK, mouse_position)
@@ -290,11 +337,9 @@ def visualize(district_number: int):
 
             draw_selected_battery(screen, selected_battery, selected_battery_location)
 
-        # --- Go ahead and update the screen with what we've drawn.
         pygame.display.flip()
         
-        # --- Limit to 60 frames per second
         clock.tick(60)
 
-    # Close the window and quit.
     pygame.quit()
+

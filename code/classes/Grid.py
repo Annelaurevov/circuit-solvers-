@@ -30,7 +30,6 @@ class Grid:
         self.district = district
 
 
-
     def load_houses(self, file_path: str) -> None:
         """Load houses into class objects"""
         house_id = 0
@@ -61,6 +60,7 @@ class Grid:
                 self.batteries.append(battery)
                 battery_id += 1
 
+
     def reset(self) -> None:
         """Resets the grid"""
         for battery in self.batteries:
@@ -71,6 +71,7 @@ class Grid:
         for house in self.houses:
             house.path = [house.position]
             house.battery = None
+
 
     def is_filled(self) -> bool:
         for house in self.houses:
@@ -94,6 +95,7 @@ class Grid:
             total_costs += self.cable_costs*(len(house.path) - 1)
 
         return total_costs
+
 
     def write_out(self, path):
         """Write json file"""
@@ -124,6 +126,7 @@ class Grid:
                 data.append(battery_data)
 
             json.dump(data, f, indent=4)
+
 
     def read_in(self, path):
         file = open(path, 'r')
