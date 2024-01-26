@@ -21,6 +21,7 @@ class Battery:
         self.capacity = full_capacity
         self.id = battery_id
         self.position = position
+        self.cost = 5000
         self.houses = []
 
     def can_add(self, house) -> bool:

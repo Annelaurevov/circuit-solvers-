@@ -42,7 +42,6 @@ class AlgorithmRunner:
         sys.stdout.flush()
 
 
-
     def plot_histogram(self, grid_costs: List[float]) -> None:
         """
         Plot histogram
@@ -67,36 +66,6 @@ class AlgorithmRunner:
 
         plt.plot(x, y)
         plt.show()
-
-
-    def print_final_costs(self, costs: float) -> None:
-        """
-        Print final costs
-        """
-        text = f"Final cost {costs}"
-        print("-" * len(text))
-        print(text)
-        print("-" * len(text))
-        print()
-
-
-    def load_structures(self) -> None:
-        """
-        Load structures into the grid
-        """
-        self.grid.load_houses(f"data/district_{self.district}/district-{self.district}_houses.csv")
-        self.grid.load_batteries(f"data/district_{self.district}/district-{self.district}_batteries.csv")
-
-
-    def breath_or_dijkstra(self) -> None:
-        """
-        Apply either breath-first greedy or Dijkstra's algorithm based on choices
-        Prints out desired text
-        """
-        if self.choices.breath:
-            breath_first_greedy(self.grid, self.choices.m)
-        elif self.choices.dijkstra:
-            dijkstra_from_battery(self.grid)
 
 
     def print_algorithm_text(self) -> None:
@@ -149,6 +118,36 @@ class AlgorithmRunner:
             print("- saving output as: '" + self.choices.output + "'")
 
 
+    def print_final_costs(self, costs: float) -> None:
+        """
+        Print final costs
+        """
+        text = f"Final cost {costs}"
+        print("-" * len(text))
+        print(text)
+        print("-" * len(text))
+        print()
+
+
+    def load_structures(self) -> None:
+        """
+        Load structures into the grid
+        """
+        self.grid.load_houses(f"data/district_{self.district}/district-{self.district}_houses.csv")
+        self.grid.load_batteries(f"data/district_{self.district}/district-{self.district}_batteries.csv")
+
+
+    def breath_or_dijkstra(self) -> None:
+        """
+        Apply either breath-first greedy or Dijkstra's algorithm based on choices
+        Prints out desired text
+        """
+        if self.choices.breath:
+            breath_first_greedy(self.grid, self.choices.m)
+        elif self.choices.dijkstra:
+            dijkstra_from_battery(self.grid)
+
+
     def start_random(self) -> None:
         """
         Start with random algorithm
@@ -182,6 +181,7 @@ class AlgorithmRunner:
 
         self.print_final_costs(grid_costs[0])
 
+
     def start_greedy(self) -> None:
         """
         Start with greedy algorithm
@@ -198,6 +198,7 @@ class AlgorithmRunner:
 
         self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
+
 
     def start_with_input(self) -> None:
         """

@@ -11,6 +11,8 @@ from code.algoritmen.random import random_connect
 
 from code.algoritmen.not_named_yet import run_alg
 from code.algoritmen.dijkstra import run_dijkstra, dijkstra_from_battery
+from code.algoritmen.advanced_alg import run_adv
+
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 
@@ -68,8 +70,8 @@ if __name__ == "__main__":
     grid = Grid(district)
     # grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
     # grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
-    
- 
+
+
     if choices.algorithm == 'random':
         lowest = 10e10
         grid_costs = []
@@ -82,6 +84,7 @@ if __name__ == "__main__":
                 pass
             if grid.calc_costs() < lowest:
                 grid.write_out(r"data/outputs/output_district-X.json".replace("X", str(district)))
+                lowest = grid.calc_costs()
             grid_costs.append(grid.calc_costs())
         if choices.hist:
                 plot_histogram(district, choices.n, grid_costs)
@@ -94,12 +97,36 @@ if __name__ == "__main__":
                 pass
         print("Finished -g")
 
-    
+
     grid.read_in(f"data/outputs/output_district-{district}-random2.json")
 
- #     run_dijkstra(grid)
-    dijkstra_from_battery(grid)
+    # battery = Battery((0,0), 10e10, -1)
+    # for house in grid.houses:
+    #     house.battery = battery
+    #     battery.houses.append(house)
+    #     house.path = [house.position]
+    # grid.batteries = [battery]
 
+ #     run_dijkstra(grid)
+    # dijkstra_from_battery(grid)
+    low = grid.calc_costs()
+    while True:
+        print(f"cost = {grid.calc_costs()}")
+        grid = Grid(district)
+        grid.read_in(f"data/outputs/output_district-{district}-random2.json")
+        run_adv(grid)
+        if grid.calc_costs() < low:
+            low = grid.calc_costs()
+
+            grid.write_out(f"data/outputs/output_district-{district}.json")
+
+            if choices.visualize:
+                visualize(district)
+
+
+
+    for battery in grid.batteries:
+        print(f"battery {battery.id} has #{len(battery.houses)} totalling capacity {sum(house.capacity for house in battery.houses)}")
 
     assert grid.is_filled()
 
