@@ -58,7 +58,7 @@ Usage: python [option] [district]
 - **`-o <name>`** en/of **`-v`** en/of **`-p`**
 
 ### **Stap 5:** Kies één district nummer
-- **`[1-3]`**
+- **`<1-3>`**
 
 ### **Help:**
 - **`-h`**
