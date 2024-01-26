@@ -75,7 +75,7 @@ class Grid:
     def is_filled(self) -> bool:
         for house in self.houses:
             if house.battery is None:
-                print(f"House {house.id} without battery")
+
                 return False
             # if house.get_path_length() == 0:
             #     print(f"House {house.id} has no path")
@@ -87,7 +87,8 @@ class Grid:
 
         total_costs = 0
 
-        total_costs += self.battery_costs * len(self.batteries)
+        for battery in self.batteries:
+            total_costs += battery.cost
 
         for house in self.houses:            
             total_costs += self.cable_costs*(len(house.path) - 1)
@@ -130,15 +131,15 @@ class Grid:
         battery_id = 0
         house_id = 0
         for location_data in data[1:]:
-            
+
             position = tuple(map(int, location_data['location'].split(',')))
             capacity = location_data["capacity"]
             battery = Battery(position, capacity, battery_id)
-            
+
             battery_id += 1
 
             for house_data in location_data["houses"]:
-                
+
                 position = tuple(map(int, house_data['location'].split(',')))
                 house = House(position, house_data["output"], house_id)
                 house_id += 1

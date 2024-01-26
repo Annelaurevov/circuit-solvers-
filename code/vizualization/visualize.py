@@ -198,7 +198,8 @@ def visualize(district_number: int):
         """
         coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
         for i in range(len(coordinates)):
-            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0]:
+            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and \
+                coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
                 return i + 1
 
 
@@ -278,7 +279,7 @@ def visualize(district_number: int):
         # Draw a red circle at the mouse position
         draw_selected_location(screen, BLACK, mouse_position)
         
-        if check_battery(mouse_position) == True:
+        if check_battery(mouse_position):
             selected_battery = check_which_battery(mouse_position)
             selected_battery_location = data[selected_battery]["location"]
             color_selected_battery = colors[selected_battery - 1]
