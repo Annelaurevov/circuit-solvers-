@@ -45,29 +45,28 @@ Usage: python [option] [district]
         -h          Shows this message
 ```
 
-### **Stap 1:** Kies één
+#### **Stap 1:** Kies één
 - **`'-g'`** of **`'-r' ('-n' <iterations>)`** of **`'-i' ('-f' <name>)`**
 
-### **Stap 2:** Kies
+#### **Stap 2:** Kies
 - wel of niet **`-s`** 
 
-### **Stap 3:** Kies één
+#### **Stap 3:** Kies één
 - **`-b (-m <main branches>)`** of **`-d`**
 
-### **Stap 4:** Kies welke
+#### **Stap 4:** Kies welke
 - **`-o <name>`** en/of **`-v`** en/of **`-p`**
 
-### **Stap 5:** Kies één district nummer
+#### **Stap 5:** Kies één district nummer
 - **`<1-3>`**
 
-### **Help:**
-- **`-h`**
-
-### **Voorbeelden:**
+#### **Voorbeelden:**
 - *Greedy Algorithm op district 1:* `python main.py '-g' 1`
 - *Random Algorithm met 10 iterations en Histogram op district 1:* `python main.py '-r' '-n' 10 '-p' 1`
 - *Breath-First Greedy Algorithm op previous run file met 3 main branches en Visualization, met 'important' als output naam op district 2:* `python main.py '-i' '-b' '-m' 3 '-o' important '-v' 2`
 
+#### Visualisatie
+Met de visualisatie kan over een batterij worden gehoverd om meer informatie te krijgen.
 
 
 ### Structuur
