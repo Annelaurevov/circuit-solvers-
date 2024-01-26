@@ -64,10 +64,12 @@ if __name__ == "__main__":
         sys.exit()
 
     grid = Grid(district)
-    # grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
-    # grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
+    grid.load_houses(r"data/district_X/district-X_houses.csv".replace("X", str(district)))
+    grid.load_batteries(r"data/district_X/district-X_batteries.csv".replace("X", str(district)))
     
- 
+    
+    grid.reset()
+
     if choices.algorithm == 'random':
         lowest = 10e10
         grid_costs = []
@@ -102,10 +104,12 @@ if __name__ == "__main__":
         print(f"Battery {battery.id} has {len(battery.houses)}")
     print("####")
     
-    breath_first_greedy(grid, 2)
+    breath_first_greedy(grid, 1)
 
 
     grid.write_out(f"data/outputs/output_district-{district}.json")
+
+    assert grid.is_filled()
 
     if choices.visualize:
         visualize(district)

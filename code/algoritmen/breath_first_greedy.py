@@ -8,14 +8,6 @@ from code.classes.House import House
 from code.classes.Battery import Battery
 from code.classes.Grid import Grid
 
-def keep_unique_paths(battery):
-    for house1 in battery.houses:
-        for house2 in battery.houses:
-            if house1 != house2:
-                intersection = list(set(house1.path) & set(house2.path))
-                if len(intersection) >= 2:
-                    house2.path = house2.path[:(len(house2.path) - len(intersection) + 1)]
-
 
 def battery_costs(battery: Battery, grid: Grid) -> int:
     """
@@ -90,17 +82,23 @@ def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[A
     return all_combinations
 
 
+def print_progress(battery: Battery, cheapest_config: int) -> None:
+    """
+    Prints progress when cheapest config for a battery is found
+    """
+    if cheapest_config:
+        print("Battery: " + str(battery.id + 1))
+        print("Cheapest house configuration:", ' & '.join(str(id) for id in cheapest_config[1]))
+        print("Price:", cheapest_config[0] + "\n")
+
+
 def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Battery) -> None:
     """
     Finds the last best configuration and updates it accordingly
     """
     cheapest_config = find_cheapest(config_heap)
 
-    if cheapest_config:
-        print("Battery: " + str(battery.id + 1))
-        print("Cheapest house configuration:", ', '.join(str(id) for id in cheapest_config[1]))
-        print("Price:", cheapest_config[0])
-        print("")
+    # print_progress(battery, cheapest_config)    
 
     best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)
@@ -110,6 +108,7 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
     """
     Runs the alogrithm
     """
+
     for battery in grid.batteries:
         config_heap = []
         
@@ -117,9 +116,7 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
 
         for combination in houses:
             update_paths(combination, battery)
-
             keep_unique_paths(battery)
-
             add_config_costs(combination, battery, grid, config_heap)
 
         give_best_config(config_heap, battery)
