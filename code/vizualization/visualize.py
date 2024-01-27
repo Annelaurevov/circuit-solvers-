@@ -239,14 +239,10 @@ def visualize(district_number: int) -> None:
         """
         coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
         for i in range(len(coordinates)):
-<<<<<<< HEAD
             if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and \
                 coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
-=======
-            if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
->>>>>>> 61809058d2102d74de49cfdfb3c03950f8525ade
-                return i + 1
-
+                    return i+1
+                    
     def draw_all(screen: pygame.Surface) -> None:
         """
         Draw the entire smart grid on the screen.
