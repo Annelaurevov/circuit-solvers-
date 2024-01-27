@@ -8,7 +8,14 @@ def switch_pairs(grid: object) -> bool:
     """
     switched = False
 
-    n = len(grid.houses)
+    houses = grid.houses.copy()
+
+    # Sort houses by longest path in decreasing order
+    houses.sort(key=lambda x: len(x.path), reverse=True)
+    
+    print(houses)
+
+    n = len(houses)
     for i in range(n-1):
 
         for j in range(i+1, n):
