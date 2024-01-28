@@ -1,44 +1,37 @@
-# File containing house Class
+# File containing House class
 
 class House:
     """
+    Represents a house in the smart grid.
+
     Usage:
+    - Initialize with __init__(position, capacity, house_id)
 
-    init(position, capacity, id: int)
-
-    make_path(position)
-    Makes path to certain position
+    Methods:
+    - make_path(position): Makes a path to a certain position
+    - get_path_length(): Returns the length of the path
     """
     def __init__(self, position: tuple[int, int], capacity: float, house_id: int):
-        self.position = position
-        self.capacity = capacity
-        self.path = [position]
+        """
+        Initialize a House object.
+
+        Args:
+        - position (tuple[int, int]): Initial position of the house.
+        - capacity (float): Capacity of the house.
+        - house_id (int): Unique identifier for the house.
+        """
+        self.position: tuple[int, int] = position
+        self.capacity: float = capacity
+        self.path: list[tuple[int, int]] = [position]
         self.battery = None
-        self.id = house_id
+        self.id: int = house_id
 
-    # def make_path(self, position: tuple[int, int]) -> None:
-    #     "Make path to other position"
-    #     self.path = [self.position]
-    #     posx, posy = position
-    #     Hposx, Hposy = self.position
-
-    #     while Hposx > posx:
-    #         Hposx -= 1
-    #         self.path.append((Hposx, Hposy))
-
-    #     while Hposx < posx:
-    #         Hposx += 1
-    #         self.path.append((Hposx, Hposy))
-
-
-    #     while Hposy > posy:
-    #         Hposy -= 1
-    #         self.path.append((Hposx, Hposy))
-
-    #     while Hposy < posy:
-    #         Hposy += 1
-    #         self.path.append((Hposx, Hposy))
 
     def get_path_length(self) -> int:
-        """Returns the length of the path"""
+        """
+        Returns the length of the path.
+
+        Returns:
+        int: The length of the path.
+        """
         return len(self.path) - 1

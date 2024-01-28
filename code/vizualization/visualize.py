@@ -20,6 +20,12 @@ box_height = size[1] // gridsize[1]
 
 
 def visualize(district_number: int) -> None:
+    """
+    Visualize the SmartGrid for a given district.
+
+    Args:
+    - district_number (int): The district number.
+    """
     import pygame
     pygame.init()
     pygame.font.init()

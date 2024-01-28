@@ -1,3 +1,5 @@
+# File containing function with Algorithm that optimized filled grid in breath first greedy way
+
 from code.algoritmen.manhattan_path import manhattan_path as path
 from code.algoritmen.manhattan_path import keep_unique_paths
 from code.algoritmen.manhattan_path import distance as battery_distance
@@ -11,7 +13,14 @@ from code.classes.Grid import Grid
 
 def battery_costs(battery: Battery, grid: Grid) -> int:
     """
-    Calculates costs per battery section
+    Calculates the total costs for a battery section, including cable costs for connected houses.
+
+    Args:
+    - battery (Battery): The battery for which to calculate costs.
+    - grid (Grid): The grid containing information about cable and battery costs.
+
+    Returns:
+    int: The total costs for the specified battery section.
     """
     total_costs = grid.battery_costs
     cable_costs = grid.cable_costs
@@ -24,7 +33,14 @@ def battery_costs(battery: Battery, grid: Grid) -> int:
 
 def update_paths(main_houses: List[House], battery: Battery) -> None:
     """
-    Updates the path of the non-main houses from the battery to find the shortest cable length: battery or main branch
+    Updates the paths of non-main houses from the battery, choosing the shortest cable length between battery and main branch.
+
+    Args:
+    - main_houses (List[House]): List of main houses forming the main branch.
+    - battery (Battery): The battery for which to update paths for non-main houses.
+
+    Returns:
+    None
     """
     for main_house in main_houses:
         main_house.path = path(main_house.position, battery.position)
@@ -52,7 +68,16 @@ def update_paths(main_houses: List[House], battery: Battery) -> None:
 
 def add_config_costs(main_houses: List[House], battery: Battery, grid: Grid, config_heap: List[Tuple[int, Tuple[int, ...]]]) -> None:
     """
-    Adds the configuration and its costs to the heap with a tuple
+    Adds the configuration and its costs to the heap as a tuple.
+
+    Args:
+    - main_houses (List[House]): List of main houses forming the main branch.
+    - battery (Battery): The battery for which to calculate costs.
+    - grid (Grid): The grid containing information about cable and battery costs.
+    - config_heap (List[Tuple[int, Tuple[int, ...]]]): The heap storing configurations and their costs.
+
+    Returns:
+    None
     """
     config = tuple(house.id for house in main_houses)
     costs = battery_costs(battery, grid)
@@ -62,7 +87,13 @@ def add_config_costs(main_houses: List[House], battery: Battery, grid: Grid, con
 
 def find_cheapest(config_heap: List[Tuple[int, Tuple[int, ...]]]) -> Tuple[int, ...]:
     """
-    Finds the cheapest configuration from the heap
+    Finds the cheapest configuration from the heap.
+
+    Args:
+    - config_heap (List[Tuple[int, Tuple[int, ...]]]): The heap storing configurations and their costs.
+
+    Returns:
+    Tuple[int, ...]: The tuple representing the cheapest configuration.
     """
     if not config_heap:
         return tuple()
@@ -73,7 +104,14 @@ def find_cheapest(config_heap: List[Tuple[int, Tuple[int, ...]]]) -> Tuple[int, 
 
 def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[Any, ...]]:
     """
-    Generates all combinations of objects up to the specified depth
+    Generates all combinations of objects up to the specified depth.
+
+    Args:
+    - objects (List[Any]): List of objects for which to generate combinations.
+    - max_branches (int): The maximum depth for combinations.
+
+    Returns:
+    List[Tuple[Any, ...]]: The list of generated combinations.
     """
     all_combinations = []
     for r in range(1, max_branches + 1):
@@ -84,7 +122,14 @@ def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[A
 
 def print_progress(battery: Battery, cheapest_config: int) -> None:
     """
-    Prints progress when cheapest config for a battery is found
+    Prints progress when the cheapest configuration for a battery is found.
+
+    Args:
+    - battery (Battery): The battery for which the progress is printed.
+    - cheapest_config (int): The cheapest configuration information.
+
+    Returns:
+    None
     """
     if cheapest_config:
         print("Battery: " + str(battery.id + 1))
@@ -94,11 +139,18 @@ def print_progress(battery: Battery, cheapest_config: int) -> None:
 
 def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Battery) -> None:
     """
-    Finds the last best configuration and updates it accordingly
+    Finds the last best configuration and updates it accordingly.
+
+    Args:
+    - config_heap (List[Tuple[int, Tuple[int, ...]]]): The heap storing configurations and their costs.
+    - battery (Battery): The battery for which to update the best configuration.
+
+    Returns:
+    None
     """
     cheapest_config = find_cheapest(config_heap)
 
-    # print_progress(battery, cheapest_config)    
+    # print_progress(battery, cheapest_config)
 
     best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)
@@ -106,12 +158,18 @@ def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Ba
 
 def breath_first_greedy(grid: Grid, max_branches: int) -> None:
     """
-    Runs the alogrithm
-    """
+    Runs the algorithm using a breath-first greedy approach.
 
+    Args:
+    - grid (Grid): The grid containing information about houses, batteries, and costs.
+    - max_branches (int): The maximum depth for generating combinations.
+
+    Returns:
+    None
+    """
     for battery in grid.batteries:
         config_heap = []
-        
+
         houses = generate_combinations(battery.houses, max_branches)
 
         for combination in houses:
@@ -122,19 +180,3 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
         give_best_config(config_heap, battery)
 
         keep_unique_paths(battery)
-
-        
-
-
-
-        
-        
-    
-
-
-
-
-
-
-
-
