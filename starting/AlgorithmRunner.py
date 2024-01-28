@@ -55,6 +55,7 @@ class AlgorithmRunner:
         self.district = district
         self.visualizer = Visualizer(district)
 
+
     def print_progress(self, n: int, max_n: int) -> None:
         """
         Prints a progress bar for iterations during the random algorithm.
@@ -72,6 +73,7 @@ class AlgorithmRunner:
         
         sys.stdout.write('\r' + progress_bar)
         sys.stdout.flush()
+
 
     def plot_histogram(self, grid_costs: List[float]) -> None:
         """
@@ -100,6 +102,7 @@ class AlgorithmRunner:
 
         plt.plot(x, y)
         plt.show()
+
 
     def print_algorithm_text(self) -> None:
         """
@@ -150,6 +153,7 @@ class AlgorithmRunner:
         if len(self.choices.output) != 0:
             print("- saving output as: '" + self.choices.output + "'")
 
+
     def print_final_costs(self, costs: float) -> None:
         """
         Prints final costs.
@@ -163,12 +167,14 @@ class AlgorithmRunner:
         print("-" * len(text))
         print()
 
+
     def load_structures(self) -> None:
         """
         Loads houses and batteries into the grid.
         """
         self.grid.load_houses(f"data/district_{self.district}/district-{self.district}_houses.csv")
         self.grid.load_batteries(f"data/district_{self.district}/district-{self.district}_batteries.csv")
+
 
     def breath_or_dijkstra(self) -> None:
         """
@@ -179,6 +185,7 @@ class AlgorithmRunner:
             breath_first_greedy(self.grid, self.choices.m)
         elif self.choices.dijkstra:
             dijkstra_from_battery(self.grid)
+
 
     def start_random(self) -> None:
         """
@@ -212,7 +219,8 @@ class AlgorithmRunner:
         if self.choices.hist:
             self.plot_histogram(grid_costs)
 
-        self.print_final_costs(lowest)  # Ensure to use the lowest value here
+        self.print_final_costs(lowest)
+
 
     def start_greedy(self) -> None:
         """
@@ -231,6 +239,7 @@ class AlgorithmRunner:
         self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
 
+
     def start_with_input(self) -> None:
         """
         Starts with existing output as input.
@@ -248,6 +257,7 @@ class AlgorithmRunner:
 
         self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
+
 
     def run(self) -> None:
         """
