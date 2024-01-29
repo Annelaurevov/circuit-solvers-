@@ -23,6 +23,9 @@ from code.libs.arguments import arguments
 import multiprocessing
 from functools import partial
 
+from code.vizualization.Progress import Progress
+
+
 
 class AlgorithmRunner:
     """
@@ -56,6 +59,7 @@ class AlgorithmRunner:
         - choices (Choices): User choices for algorithm options.
         - district (int): The district number.
         """
+        self.progress_bar = Progress()
         self.grid = grid
         self.choices = choices
         self.district = district
@@ -240,16 +244,16 @@ class AlgorithmRunner:
                 writer.writerow(row)
 
 
-    def start_random_iterations(self, amount, grid_costs, shared_lowest):
-
-
+    def start_random_iterations(self, amount, grid_costs, shared_lowest, progress_id):
         grid = self.grid.copy()
         local_lowest = float('inf')
+        progress_bar = self.progress_bar
 
         for i in range(amount):
-            if self.choices.n != 1:
-                self.print_progress(i, self.choices.n)
-
+            progress_bar.update_counters(progress_id, i+1)
+            progress_bar.print_counters()
+                
+                # print(self.progress_bar.counters)
             while not random_connect(grid):
                 grid.reset()
 
@@ -264,6 +268,7 @@ class AlgorithmRunner:
             if current_cost < local_lowest:
                 local_lowest = current_cost
                 minimum_grid = grid.copy()
+
                 
 
         # Update the shared lowest value if the local minimum is lower
@@ -279,13 +284,18 @@ class AlgorithmRunner:
         """
         Starts the random algorithm and writes results for each iteration to a CSV file.
         """
+
+        global progress_bar
+
         self.print_algorithm_text()
         self.load_structures()
+        
 
         # Use multiprocessing to parallelize the loop
         with multiprocessing.Manager() as manager:
             lowest = manager.Value('d', float('inf'))
             grid_costs = []
+            self.progress_bar.progression = manager.dict()
 
             # Number of processes you want to run concurrently
             num_processes = multiprocessing.cpu_count()
@@ -301,14 +311,15 @@ class AlgorithmRunner:
             for i in range(num_processes):
                 if n//(num_processes - i) == 0:
                     continue
-                inputs.append((n//(num_processes - i), grid_costs, lowest))
+                progress_id = self.progress_bar.add_counter(n//(num_processes - i))
+                # print(f"{progress_bar.progression=}")
+                # print(f"{progress_id=}")
+                inputs.append((n//(num_processes - i), grid_costs, lowest, progress_id))
                 n -= n//(num_processes - i)
 
             out = pool.starmap(self.start_random_iterations, inputs)
             self.grid = min(out, key=lambda x: x.calc_costs())
             self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-
-            print(f"{len(grid_costs)=}")
 
             # Close the pool to free resources
             pool.close()

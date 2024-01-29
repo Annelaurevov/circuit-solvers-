@@ -82,11 +82,9 @@ class Grid:
 
 
     def copy(self):
-        new_grid = Grid(self.district)
-        new_grid.houses = deepcopy(self.houses)
-        new_grid.batteries = deepcopy(self.batteries)
 
-        return new_grid
+
+        return deepcopy(self)
 
 
 
