@@ -17,12 +17,18 @@ def random_connect(grid: object) -> bool:
     while houses:
         house = houses.pop()
         batteries = [battery for battery in grid.batteries if battery.can_add(house)]
-        
+
         if not batteries:
             return False
-        
+
         battery = random.choice(batteries)
         battery.add(house)
         house.path = path(house.position, battery.position)
-    
+
     return True
+
+
+def random_connect_till_connected(grid):
+    """Keeps trying random configurations untill everything is connected"""
+    while not random_connect(grid):
+        grid.reset()
