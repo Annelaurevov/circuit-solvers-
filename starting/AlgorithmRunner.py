@@ -8,21 +8,19 @@ from code.classes.Grid import Grid
 from code.classes.House import House
 from code.classes.Battery import Battery
 from code.libs.arguments import Choices
-# from code.vizualization.Visualizer import Visualizer
 
-from code.algoritmen.fill_grid import fill_grid_greedy
+from code.algoritmen.greedy import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
 from code.algoritmen.breath_first_greedy import breath_first_greedy
 from code.algoritmen.dijkstra import dijkstra_from_battery
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
-from code.vizualization.visualize import visualize
 from code.libs.arguments import arguments
+from code.vizualization.visualize import visualize
 
 import multiprocessing
 from functools import partial
-
 
 class AlgorithmRunner:
     """
@@ -145,6 +143,8 @@ class AlgorithmRunner:
             if self.choices.hist:
                 print("- showing histogram plot")
 
+            if self.choices.visualize:
+                print("- visualizing result")
 
             if len(self.choices.output) != 0:
                 print("- saving output as: '" + self.choices.output + "'")
@@ -160,7 +160,10 @@ class AlgorithmRunner:
             print(f"- using {self.choices.m} main {'branch' if self.choices.m == 1 else 'branches'}")
         elif self.choices.dijkstra:
             print("- optimizing filled grid with dijkstra")
-            
+        
+        if self.choices.visualize:
+            print("- visualizing result")
+
         if len(self.choices.output) != 0:
             print("- saving output as: '" + self.choices.output + "'")
 
@@ -173,6 +176,7 @@ class AlgorithmRunner:
         - costs (float): The final cost value.
         """
         text = f"Final cost {costs}"
+        print("")
         print("-" * len(text))
         print(text)
         print("-" * len(text))
@@ -231,7 +235,7 @@ class AlgorithmRunner:
         - data (List[List[float]]): List containing data to be written to the CSV file.
         """
         header = self.get_selected_options()
-        csv_filename = f"data/outputs/results_district-{self.district}-{header}.csv"
+        csv_filename = f"data/outputs/CSV/results_district-{self.district}-{header}.csv"
 
         with open(csv_filename, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
@@ -241,7 +245,6 @@ class AlgorithmRunner:
 
 
     def start_random_iterations(self, amount, grid_costs, shared_lowest):
-
 
         grid = self.grid.copy()
         local_lowest = float('inf')
@@ -271,7 +274,7 @@ class AlgorithmRunner:
             shared_lowest.value = local_lowest
 
         assert grid.is_filled()
-        return minimum_grid
+        return minimum_grid, grid_costs
 
 
 
@@ -304,11 +307,18 @@ class AlgorithmRunner:
                 inputs.append((n//(num_processes - i), grid_costs, lowest))
                 n -= n//(num_processes - i)
 
-            out = pool.starmap(self.start_random_iterations, inputs)
-            self.grid = min(out, key=lambda x: x.calc_costs())
-            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+            # Use imap_unordered to iterate over results as they become available
+            results = pool.starmap(self.start_random_iterations, inputs)
 
-            print(f"{len(grid_costs)=}")
+            # Collect results and grid_costs
+            min_grids = []
+            for result in results:
+                min_grids.append(result[0])
+                grid_costs.extend(result[1])
+
+            # Get the minimum grid based on calc_costs()
+            self.grid = min(min_grids, key=lambda x: x.calc_costs())
+            self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
 
             # Close the pool to free resources
             pool.close()
@@ -340,7 +350,7 @@ class AlgorithmRunner:
 
         self.breath_or_dijkstra()
 
-        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
 
 
@@ -349,7 +359,7 @@ class AlgorithmRunner:
         Starts with existing output as input.
         """
         self.print_algorithm_text()
-        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
+        self.grid.read_in(f"data/outputs/json/output_district-{self.district}{self.choices.filename}.json")
 
         assert self.grid.is_filled()
 
@@ -358,8 +368,6 @@ class AlgorithmRunner:
                 pass
 
         self.breath_or_dijkstra()
-
-
 
 
     def run(self) -> None:
@@ -376,7 +384,7 @@ class AlgorithmRunner:
         assert self.grid.is_filled()
 
         if self.choices.visualize:
-            self.visualizer.run()
+            visualize(self.choices.district)
 
         if len(self.choices.output) != 0:
-            self.grid.write_out(f"data/outputs/output_district-{self.district}-{self.choices.output}.json")
+            self.grid.write_out(f"data/outputs/json/output_district-{self.district}-{self.choices.output}.json")

@@ -1,3 +1,5 @@
+# File containing Visualing function
+
 import json
 import sys
 
@@ -13,7 +15,6 @@ colors = [BLUE, RED, GREEN, PURPLE, ORANGE]
 
 size = (800, 800)
 gridsize = (60, 60)
-
 box_width = size[0] // gridsize[0]
 box_height = size[1] // gridsize[1]
 
@@ -26,22 +27,25 @@ def visualize(district_number: int) -> None:
     Args:
     - district_number (int): The district number.
     """
-    import pygame
+
     pygame.init()
     pygame.font.init()
+
+    # Pygame screen setup
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("SmartGrid")
     font = pygame.font.Font(None, 20)
-    
     clock = pygame.time.Clock()
 
+    # Load images
     battery = pygame.image.load(r'data/images/battery.png')
     battery = pygame.transform.scale(battery, (2 * box_width, 2 * box_height))
-
     house = pygame.image.load(r'data/images/house.png').convert_alpha()
     house = pygame.transform.scale(house, (1 * box_width, 1 * box_height))
-    file_path = f"data/outputs/output_district-{district_number}.json"
-    quit = False 
+
+    file_path = f"data/outputs/json/output_district-{district_number}.json"
+    quit = False
+
 
     def draw_selected_location(screen: pygame.Surface, color, position) -> None:
         """
@@ -209,7 +213,7 @@ def visualize(district_number: int) -> None:
 
         # TODO: change if we try advanced 
         # total_costs = price batteries * amount of batteries
-        total_cost += 5000 * 5
+        total_cost += 5000
 
         for house_data in data[selected_battery]["houses"]:
             #print(len(house_data['cables']) - 1)
@@ -306,7 +310,7 @@ def visualize(district_number: int) -> None:
         draw_text(screen, "ouput: " + str(int(calc_output_battery(selected_battery))), BLACK, (mouse_position[0], mouse_position[1]+13))
         draw_text(screen, "Cost: " + str(calc_cost_battery(selected_battery)), BLACK, (mouse_position[0], mouse_position[1]+ 26))
 
-        
+
     try:
         file = open(file_path, 'r')
         data = json.load(file)
@@ -344,4 +348,3 @@ def visualize(district_number: int) -> None:
         clock.tick(60)
 
     pygame.quit()
-

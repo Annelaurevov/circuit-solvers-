@@ -29,14 +29,4 @@ if __name__ == "__main__":
     choices, district, grid = parse_command_line()
 
     runner = AlgorithmRunner(grid, choices, district)
-
-
-    start = time.time()
-    times = []
-    runs = 0
-    while time.time() - start <= 60:
-        runs += 1
-        runner.run()
-        runner.grid.reset()
-        print(f"{time.time() - start = }")
-    print(f"Time elapsed = {time.time() - start}\n runs = {runs}\n Average time = {(time.time() - start) / runs}")
+    runner.run()

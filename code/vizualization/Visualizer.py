@@ -1,7 +1,6 @@
 # File containing Visualizer class
-
-import json
 import pygame
+import json
 import sys
 
 class Visualizer:
@@ -80,7 +79,7 @@ class Visualizer:
         self.clock = pygame.time.Clock()
 
 
-    def transform_image(self, image: pygame.Surface, width: int, height: int) -> pygame.Surface:
+    def transform_image(self, image, width: int, height: int):
         """
         Transform the size of an image.
 
@@ -100,7 +99,7 @@ class Visualizer:
         """
         Load district data from a JSON file.
         """
-        file_path = f"data/outputs/output_district-{self.district_number}.json"
+        file_path = f"data/outputs/JSON/output_district-{self.district_number}.json"
         try:
             file = open(file_path, 'r')
             self.data = json.load(file)
