@@ -150,7 +150,7 @@ def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Ba
     """
     cheapest_config = find_cheapest(config_heap)
 
-    print_progress(battery, cheapest_config)
+    # print_progress(battery, cheapest_config)
 
     best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)

@@ -8,7 +8,7 @@ from code.classes.Grid import Grid
 from code.classes.House import House
 from code.classes.Battery import Battery
 from code.libs.arguments import Choices
-from code.vizualization.Visualizer import Visualizer
+# from code.vizualization.Visualizer import Visualizer
 
 from code.algoritmen.fill_grid import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
@@ -19,6 +19,9 @@ from code.algoritmen.dijkstra import dijkstra_from_battery
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 # from code.vizualization.visualize import visualize
 from code.libs.arguments import arguments
+
+import multiprocessing
+from functools import partial
 
 
 class AlgorithmRunner:
@@ -56,7 +59,7 @@ class AlgorithmRunner:
         self.grid = grid
         self.choices = choices
         self.district = district
-        self.visualizer = Visualizer(district)
+        # self.visualizer = Visualizer(district)
 
 
     def print_progress(self, n: int, max_n: int) -> None:
@@ -237,17 +240,12 @@ class AlgorithmRunner:
                 writer.writerow(row)
 
 
-    def start_random(self) -> None:
-        """
-        Starts the random algorithm and writes results for each iteration to a CSV file.
-        """
-        self.print_algorithm_text()
-        self.load_structures()
+    def start_random_iterations(self, i, grid_costs, shared_lowest):
+        amount = 2
 
-        lowest = float('inf')
-        grid_costs = []
+        local_lowest = float('inf')
 
-        for i in range(self.choices.n):
+        for _ in range(amount):
             if self.choices.n != 1:
                 self.print_progress(i, self.choices.n)
 
@@ -262,54 +260,89 @@ class AlgorithmRunner:
             current_cost = self.grid.calc_costs()
             grid_costs.append([current_cost])
 
-            if current_cost < lowest:
-                lowest = current_cost
+            if current_cost < local_lowest:
+                local_lowest = current_cost
                 self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
 
-        if self.choices.csv:
-            self.write_results_to_csv(grid_costs)
+        # Update the shared lowest value if the local minimum is lower
+        if local_lowest < shared_lowest.value:
+            shared_lowest.value = local_lowest
 
-        if self.choices.hist:
-            self.plot_histogram(grid_costs)
-
-        self.print_final_costs(lowest)
+        assert self.grid.is_filled()
 
 
-        def start_greedy(self) -> None:
-            """
-            Starts the greedy algorithm.
-            """
-            self.print_algorithm_text()
-            self.load_structures()
-            fill_grid_greedy(self.grid)
+    def start_random(self) -> None:
+        """
+        Starts the random algorithm and writes results for each iteration to a CSV file.
+        """
+        self.print_algorithm_text()
+        self.load_structures()
 
-            if self.choices.switches:
-                while switch_pairs(self.grid):
-                    pass
+        # Use multiprocessing to parallelize the loop
+        with multiprocessing.Manager() as manager:
+            lowest = manager.Value('d', float('inf'))
+            grid_costs = []
 
-            self.breath_or_dijkstra()
+            # Number of processes you want to run concurrently
+            num_processes = multiprocessing.cpu_count()
 
-            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-            self.print_final_costs(self.grid.calc_costs())
+            # Create a pool of processes
+            pool = multiprocessing.Pool(processes=num_processes)
+
+            # Use multiprocessing to parallelize the loop
+            pool.starmap(self.start_random_iterations, [(i, grid_costs, lowest) for i in range(self.choices.n)])
+
+            # Close the pool to free resources
+            pool.close()
+            # Wait for all processes to finish
+            pool.join()
+
+            if self.choices.csv:
+                self.write_results_to_csv(list(grid_costs))  # Convert to a regular list before writing to CSV
+
+            if self.choices.hist:
+                self.plot_histogram(list(grid_costs))  # Convert to a regular list before plotting
+
+            self.print_final_costs(lowest.value)
+
+        assert self.grid.is_filled()
 
 
-        def start_with_input(self) -> None:
-            """
-            Starts with existing output as input.
-            """
-            self.print_algorithm_text()
-            self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
+    def start_greedy(self) -> None:
+        """
+        Starts the greedy algorithm.
+        """
+        self.print_algorithm_text()
+        self.load_structures()
+        fill_grid_greedy(self.grid)
 
-            assert self.grid.is_filled()
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
 
-            if self.choices.switches:
-                while switch_pairs(self.grid):
-                    pass
+        self.breath_or_dijkstra()
 
-            self.breath_or_dijkstra()
+        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.print_final_costs(self.grid.calc_costs())
 
-            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-            self.print_final_costs(self.grid.calc_costs())
+
+    def start_with_input(self) -> None:
+        """
+        Starts with existing output as input.
+        """
+        self.print_algorithm_text()
+        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
+
+        assert self.grid.is_filled()
+
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
+
+        self.breath_or_dijkstra()
+
+        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.print_final_costs(self.grid.calc_costs())
 
 
     def run(self) -> None:
