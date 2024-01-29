@@ -120,13 +120,13 @@ def generate_combinations(objects: List[Any], max_branches: int) -> List[Tuple[A
     return all_combinations
 
 
-def print_progress(battery: Battery, cheapest_config: int) -> None:
+def print_progress(battery: Battery, cheapest_config: Tuple[int, Tuple[int, ...]]) -> None:
     """
     Prints progress when the cheapest configuration for a battery is found.
 
     Args:
     - battery (Battery): The battery for which the progress is printed.
-    - cheapest_config (int): The cheapest configuration information.
+    - cheapest_config (Tuple[int, Tuple[int, ...]]): The cheapest configuration information.
 
     Returns:
     None
@@ -134,7 +134,7 @@ def print_progress(battery: Battery, cheapest_config: int) -> None:
     if cheapest_config:
         print("Battery: " + str(battery.id + 1))
         print("Cheapest house configuration:", ' & '.join(str(id) for id in cheapest_config[1]))
-        print("Price:", cheapest_config[0] + "\n")
+        print("Price:", str(cheapest_config[0]) + "\n")  # Convert to string before concatenating
 
 
 def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Battery) -> None:
@@ -150,7 +150,7 @@ def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Ba
     """
     cheapest_config = find_cheapest(config_heap)
 
-    # print_progress(battery, cheapest_config)
+    print_progress(battery, cheapest_config)
 
     best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)
