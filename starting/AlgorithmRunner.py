@@ -17,7 +17,7 @@ from code.algoritmen.breath_first_greedy import breath_first_greedy
 from code.algoritmen.dijkstra import dijkstra_from_battery
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
-# from code.vizualization.visualize import visualize
+from code.vizualization.visualize import visualize
 from code.libs.arguments import arguments
 
 import multiprocessing
@@ -241,37 +241,41 @@ class AlgorithmRunner:
 
 
     def start_random_iterations(self, i, grid_costs, shared_lowest):
-        amount = 2
+        amount = 1000
 
+
+        grid = self.grid.copy()
         local_lowest = float('inf')
 
         for _ in range(amount):
             if self.choices.n != 1:
                 self.print_progress(i, self.choices.n)
 
-            while not random_connect(self.grid):
-                self.grid.reset()
+            while not random_connect(grid):
+                grid.reset()
 
-            while self.choices.switches and switch_pairs(self.grid):
+            while self.choices.switches and switch_pairs(grid):
                 pass
 
             self.breath_or_dijkstra()
 
-            current_cost = self.grid.calc_costs()
+            current_cost = grid.calc_costs()
             grid_costs.append([current_cost])
 
             if current_cost < local_lowest:
                 local_lowest = current_cost
-                self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+                minimum_grid = grid.copy()
+                
 
         # Update the shared lowest value if the local minimum is lower
         if local_lowest < shared_lowest.value:
             shared_lowest.value = local_lowest
 
-        assert self.grid.is_filled()
+        assert grid.is_filled()
+        return minimum_grid
 
 
-<<<<<<< HEAD
+
     def start_random(self) -> None:
         """
         Starts the random algorithm and writes results for each iteration to a CSV file.
@@ -291,8 +295,9 @@ class AlgorithmRunner:
             pool = multiprocessing.Pool(processes=num_processes)
 
             # Use multiprocessing to parallelize the loop
-            pool.starmap(self.start_random_iterations, [(i, grid_costs, lowest) for i in range(self.choices.n)])
-
+            out = pool.starmap(self.start_random_iterations, [(i, grid_costs, lowest) for i in range(self.choices.n)])
+            self.grid = min(out, key=lambda x: x.calc_costs())
+            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
             # Close the pool to free resources
             pool.close()
             # Wait for all processes to finish
@@ -342,43 +347,7 @@ class AlgorithmRunner:
 
         self.breath_or_dijkstra()
 
-=======
-    def start_greedy(self) -> None:
-        """
-        Starts the greedy algorithm.
-        """
-        self.print_algorithm_text()
-        self.load_structures()
-        fill_grid_greedy(self.grid)
 
-        if self.choices.switches:
-            while switch_pairs(self.grid):
-                pass
-
-        self.breath_or_dijkstra()
-
-        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-        self.print_final_costs(self.grid.calc_costs())
-
-
-    def start_with_input(self) -> None:
-        """
-        Starts with existing output as input.
-        """
-        self.print_algorithm_text()
-        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
-
-        assert self.grid.is_filled()
-
-        if self.choices.switches:
-            while switch_pairs(self.grid):
-                pass
-
-        self.breath_or_dijkstra()
-
->>>>>>> 0dcefbfb2a4c678effd23a136b5a73c24bf49a5d
-        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-        self.print_final_costs(self.grid.calc_costs())
 
 
     def run(self) -> None:

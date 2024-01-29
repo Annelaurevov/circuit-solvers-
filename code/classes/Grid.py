@@ -2,6 +2,7 @@
 
 from code.classes.House import House
 from code.classes.Battery import Battery
+from copy import deepcopy
 
 import csv
 import json
@@ -78,6 +79,15 @@ class Grid:
                 battery: Battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)
                 battery_id += 1
+
+
+    def copy(self):
+        new_grid = Grid(self.district)
+        new_grid.houses = deepcopy(self.houses)
+        new_grid.batteries = deepcopy(self.batteries)
+
+        return new_grid
+
 
 
     def reset(self) -> None:
