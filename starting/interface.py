@@ -34,6 +34,7 @@ class Choices:
         self.m: tk.StringVar = tk.StringVar(value="1")
         self.dijkstra: tk.BooleanVar = tk.BooleanVar(value=False)
         self.hist: tk.BooleanVar = tk.BooleanVar(value=False)
+        self.csv: tk.BooleanVar = tk.BooleanVar(value=False)
         self.visualize: tk.BooleanVar = tk.BooleanVar(value=False)
         self.output: tk.StringVar = tk.StringVar(value="")
         self.district: tk.StringVar = tk.StringVar(value="1")
@@ -42,15 +43,47 @@ class Choices:
 
         self.create_widgets()
 
+    def reset_variables(self):
+        """
+        Resets the variables to their initial values.
+        """
+        self.filename.set("")
+        self.n.set("1")
+        self.switches.set(False)
+        self.breath.set(False)
+        self.m.set("1")
+        self.dijkstra.set(False)
+        self.hist.set(False)
+        self.csv.set(False)
+        self.visualize.set(False)
+        self.output.set("")
+        self.district.set("1")
+        self.previous.set(True)
+
+    def validate_numeric_input(self, action, value_if_allowed, current_value, new_input, validation_type, trigger_type, widget_name):
+        """
+        Validation function to allow only numeric input (excluding leading 0) or an empty string.
+        """
+        if action == '1':  # insert
+            if new_input.isdigit() or (new_input == "" and current_value != ""):
+                # Allow only numeric input or an empty string, excluding leading 0
+                return not (new_input == "0" and current_value == "")
+            else:
+                return False
+        else:
+            return True
+
+
+
     def on_algorithm_change(self, *args):
         """
         Callback for the algorithm change event.
         Adjusts the visibility of certain widgets based on the selected algorithm.
         """
-        current_algorithm: str = self.algorithm.get()
+        # Reset variables when the algorithm changes
+        self.reset_variables()
 
-        self.breath.set(False)
-        self.dijkstra.set(False)
+        current_algorithm: str = self.algorithm.get()
 
         self.iterations_label.grid_remove()
         self.iterations_entry.grid_remove()
@@ -58,11 +91,13 @@ class Choices:
         self.filename_label.grid_remove()
         self.filename_entry.grid_remove()
         self.hist_checkbox.grid_remove()
+        self.csv_checkbox.grid_remove()
 
         if current_algorithm == "random":
             self.iterations_label.grid(row=1, column=0, sticky="e", pady=5)
             self.iterations_entry.grid(row=1, column=1, columnspan=2, sticky="w", pady=5)
             self.hist_checkbox.grid(row=7, column=1, sticky="w", pady=5)
+            self.csv_checkbox.grid(row=7, column=2, sticky="w", pady=5)
 
         elif current_algorithm == "file":
             self.previous_file_checkbox.grid(row=1, column=1, sticky="w", pady=5)
@@ -118,6 +153,7 @@ class Choices:
         print("Output:", self.output.get())
         print("Visualize:", self.visualize.get())
         print("Hist:", self.hist.get())
+        print("CSV:", self.csv.get())
         print("District:", self.district.get())
 
         # Schedule the animation and window dismissal after 2 seconds
@@ -128,14 +164,14 @@ class Choices:
         Placeholder function for animation logic.
         Displays a messagebox and dismisses the Tkinter window.
         """
-        messagebox.showinfo("Animation", "Animation completed!")
+        messagebox.showinfo("Animation", "Heel leuk succes bericht!")
         self.root.destroy()
 
     def create_widgets(self):
         """
         Creates Tkinter widgets and arranges them in the window.
         """
-        self.algorithm_label: tk.Label = tk.Label(self.root, text="Start algorithm to fill grid:")
+        self.algorithm_label: tk.Label = tk.Label(self.root, text="Start algorithm:")
         self.algorithm_options: list[str] = ["random", "greedy", "file"]
         self.algorithm_entry: tk.OptionMenu = tk.OptionMenu(self.root, self.algorithm, *self.algorithm_options,
                                                             command=self.on_algorithm_change)
@@ -150,7 +186,7 @@ class Choices:
         self.filename_entry: tk.Entry = tk.Entry(self.root, textvariable=self.filename)
 
         self.switches_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Switches", variable=self.switches)
-        self.breath_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Breath-first", variable=self.breath,
+        self.breath_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Breath-first greedy", variable=self.breath,
                                                               command=self.on_breath_change)
 
         self.main_branches_label: tk.Label = tk.Label(self.root, text="Main Branches:")
@@ -166,7 +202,9 @@ class Choices:
         self.visualize_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Visualize grid result",
                                                                  variable=self.visualize)
         self.hist_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Show histogram", variable=self.hist)
+        self.csv_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="CSV", variable=self.csv)
 
+        # GUI PLACEMENT
         self.district_label: tk.Label = tk.Label(self.root, text="District:")
         self.district_var_options: list[str] = ["1", "2", "3"]
         self.district_var_menu: tk.OptionMenu = tk.OptionMenu(self.root, self.district, *self.district_var_options)
@@ -178,19 +216,18 @@ class Choices:
 
         self.iterations_label.grid(row=1, column=0, sticky="e", pady=5)
         self.iterations_entry.grid(row=1, column=1, columnspan=2, sticky="w", pady=5)
+        self.iterations_entry.config(validate="key", validatecommand=(self.root.register(self.validate_numeric_input), '%d', '%P', '%s', '%S', '%v', '%V', '%W'))
         self.hist_checkbox.grid(row=7, column=1, sticky="w", pady=5)
+        self.csv_checkbox.grid(row=7, column=2, sticky="w", pady=5)
 
         self.switches_checkbox.grid(row=3, column=1, sticky="w", pady=5)
         self.breath_checkbox.grid(row=4, column=1, sticky="w", pady=5)
-        self.dijkstra_checkbox.grid(row=4, column=1, sticky="e", pady=5)
-
-        self.main_branches_label.grid(row=6, column=0, sticky="e", pady=5)
-        self.main_branches_menu.grid(row=6, column=1, columnspan=2, sticky="w", pady=5)
+        self.dijkstra_checkbox.grid(row=4, column=2, sticky="w", pady=5)
 
         self.visualize_checkbox.grid(row=8, column=1, sticky="w", pady=5)
 
-        self.district_label.grid(row=9, column=0, sticky="e", pady=5)
-        self.district_var_menu.grid(row=9, column=1, columnspan=2, sticky="w", pady=5)
+        self.district_label.grid(row=0, column=1, sticky="e", pady=5)
+        self.district_var_menu.grid(row=0, column=2, columnspan=2, sticky="w", pady=5)
 
         self.output_label.grid(row=10, column=0, sticky="e", pady=5)
         self.output_entry.grid(row=10, column=1, columnspan=2, sticky="w", pady=5)

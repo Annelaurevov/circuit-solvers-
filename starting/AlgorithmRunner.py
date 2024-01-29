@@ -1,4 +1,5 @@
 import sys
+import csv
 from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,6 +36,8 @@ class AlgorithmRunner:
     - print_final_costs(costs) -> None: Prints final costs.
     - load_structures() -> None: Loads houses and batteries into the grid.
     - breath_or_dijkstra() -> None: Applies either breath-first greedy or Dijkstra's algorithm based on choices.
+    - get_selected_options() -> str: Get the selected options for inclusion in the CSV header.
+    - write_results_to_csv(data: List[List[float]]) -> None: Writes results to a CSV file.
     - start_random() -> None: Starts the random algorithm.
     - start_greedy() -> None: Starts the greedy algorithm.
     - start_with_input() -> None: Starts with existing output as input.
@@ -132,8 +135,13 @@ class AlgorithmRunner:
                 print("- optimizing each iteration with dijkstra")
                 
             print("- finding lowest cost")
+
+            if self.choices.csv:
+                print("- writing out csv file as: " + self.get_selected_options())
+
             if self.choices.hist:
                 print("- showing histogram plot")
+
 
             if len(self.choices.output) != 0:
                 print("- saving output as: '" + self.choices.output + "'")
@@ -187,9 +195,51 @@ class AlgorithmRunner:
             dijkstra_from_battery(self.grid)
 
 
+    def get_selected_options(self) -> str:
+        """
+        Get the selected options for inclusion in the CSV header.
+
+        Returns:
+        - str: String containing the selected options concatenated.
+        """
+        selected_options = []
+
+        if self.choices.switches:
+            selected_options.append('SwitchPairs')
+        if self.choices.breath:
+            selected_options.append('BreathFirst')
+        if self.choices.dijkstra:
+            selected_options.append('Dijkstra')
+
+        # If no specific algorithm is selected, use 'Random' in the header
+        if not any([self.choices.switches, self.choices.breath, self.choices.dijkstra]):
+            selected_options.append('Random')
+
+        selected_options.append(str(self.choices.n))
+
+        return "".join(selected_options)
+
+
+    def write_results_to_csv(self, data: List[List[float]]) -> None:
+        """
+        Writes results to a CSV file.
+
+        Args:
+        - data (List[List[float]]): List containing data to be written to the CSV file.
+        """
+        header = self.get_selected_options()
+        csv_filename = f"data/outputs/results_district-{self.district}-{header}.csv"
+
+        with open(csv_filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow([header])
+            for row in data:
+                writer.writerow(row)
+
+
     def start_random(self) -> None:
         """
-        Starts the random algorithm.
+        Starts the random algorithm and writes results for each iteration to a CSV file.
         """
         self.print_algorithm_text()
         self.load_structures()
@@ -210,11 +260,14 @@ class AlgorithmRunner:
             self.breath_or_dijkstra()
 
             current_cost = self.grid.calc_costs()
-            grid_costs.append(current_cost)
+            grid_costs.append([current_cost])
 
             if current_cost < lowest:
                 lowest = current_cost
                 self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+
+        if self.choices.csv:
+            self.write_results_to_csv(grid_costs)
 
         if self.choices.hist:
             self.plot_histogram(grid_costs)
@@ -222,41 +275,41 @@ class AlgorithmRunner:
         self.print_final_costs(lowest)
 
 
-    def start_greedy(self) -> None:
-        """
-        Starts the greedy algorithm.
-        """
-        self.print_algorithm_text()
-        self.load_structures()
-        fill_grid_greedy(self.grid)
+        def start_greedy(self) -> None:
+            """
+            Starts the greedy algorithm.
+            """
+            self.print_algorithm_text()
+            self.load_structures()
+            fill_grid_greedy(self.grid)
 
-        if self.choices.switches:
-            while switch_pairs(self.grid):
-                pass
+            if self.choices.switches:
+                while switch_pairs(self.grid):
+                    pass
 
-        self.breath_or_dijkstra()
+            self.breath_or_dijkstra()
 
-        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-        self.print_final_costs(self.grid.calc_costs())
+            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+            self.print_final_costs(self.grid.calc_costs())
 
 
-    def start_with_input(self) -> None:
-        """
-        Starts with existing output as input.
-        """
-        self.print_algorithm_text()
-        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
+        def start_with_input(self) -> None:
+            """
+            Starts with existing output as input.
+            """
+            self.print_algorithm_text()
+            self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
 
-        assert self.grid.is_filled()
+            assert self.grid.is_filled()
 
-        if self.choices.switches:
-            while switch_pairs(self.grid):
-                pass
+            if self.choices.switches:
+                while switch_pairs(self.grid):
+                    pass
 
-        self.breath_or_dijkstra()
+            self.breath_or_dijkstra()
 
-        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
-        self.print_final_costs(self.grid.calc_costs())
+            self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+            self.print_final_costs(self.grid.calc_costs())
 
 
     def run(self) -> None:

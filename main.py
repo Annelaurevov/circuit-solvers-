@@ -1,6 +1,6 @@
 import sys
 from code.classes.Grid import Grid
-from code.libs.arguments import arguments, Choices
+from starting.arguments import arguments, Choices
 from starting.AlgorithmRunner import AlgorithmRunner
 
 def parse_command_line():

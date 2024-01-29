@@ -13,6 +13,7 @@ class Choices:
         self.visualize = False
         self.district = None
         self.output = ""
+        self.csv = False
         self.help = False
 
         self.help_message = """
@@ -94,6 +95,9 @@ def arguments(args):
 
     if "-v" in args:
         choices.visualize = True
+
+    if "-c" in args:
+        choices.csv = True
 
     try:
         if "-h" not in args:
