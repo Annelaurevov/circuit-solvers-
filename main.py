@@ -25,8 +25,26 @@ def parse_command_line():
     return choices, district, grid
 
 
+from copy import deepcopy
+
 if __name__ == "__main__":
     choices, district, grid = parse_command_line()
-
+    start_grid = grid.copy()
     runner = AlgorithmRunner(grid, choices, district)
+<<<<<<< HEAD
     runner.run()
+=======
+    start = time.time()
+    runner.run()
+    print("Time = ", time.time()-start)
+
+    
+    times = []
+    runs = 0
+    # while time.time() - start <= 60:
+    #     runs += 1
+    #     runner = AlgorithmRunner(start_grid.copy(), choices, district)
+    #     runner.run()
+    #     print(f"{time.time() - start = }")
+    # print(f"Time elapsed = {time.time() - start}\n runs = {runs}\n Average time = {(time.time() - start) / runs}")
+>>>>>>> 21a94e90e0702642a4db8080803c4ddf8f9fa53f
