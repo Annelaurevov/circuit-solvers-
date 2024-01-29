@@ -18,6 +18,7 @@ from code.algoritmen.dijkstra import dijkstra_from_battery
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
 from code.libs.arguments import arguments
 from code.vizualization.visualize import visualize
+from code.vizualization.Progress import Progress
 
 import multiprocessing
 from functools import partial
@@ -59,7 +60,6 @@ class AlgorithmRunner:
         self.grid = grid
         self.choices = choices
         self.district = district
-        # self.visualizer = Visualizer(district)
 
 
     def print_progress(self, n: int, max_n: int) -> None:
@@ -151,6 +151,8 @@ class AlgorithmRunner:
             if len(self.choices.output) != 0:
                 print("- saving output as: '" + self.choices.output + "'")
 
+            print("")
+
             return 
 
         # Generic options
@@ -168,6 +170,8 @@ class AlgorithmRunner:
 
         if len(self.choices.output) != 0:
             print("- saving output as: '" + self.choices.output + "'")
+
+        print("")
 
 
     def print_final_costs(self, costs: float) -> None:
@@ -217,6 +221,7 @@ class AlgorithmRunner:
             selected_options.append('SwitchPairs')
         if self.choices.breath:
             selected_options.append('BreathFirst')
+            selected_options.append('-' + str(self.choices.m) + '-')
         if self.choices.dijkstra:
             selected_options.append('Dijkstra')
 
@@ -263,7 +268,10 @@ class AlgorithmRunner:
             while self.choices.switches and switch_pairs(grid):
                 pass
 
-            self.breath_or_dijkstra()
+            if self.choices.breath:
+                breath_first_greedy(grid, self.choices.m)
+            elif self.choices.dijkstra:
+                dijkstra_from_battery(grid)
 
             current_cost = grid.calc_costs()
             grid_costs.append([current_cost])

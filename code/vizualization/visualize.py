@@ -27,6 +27,7 @@ def visualize(district_number: int) -> None:
     Args:
     - district_number (int): The district number.
     """
+    import pygame
 
     pygame.init()
     pygame.font.init()
