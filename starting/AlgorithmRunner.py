@@ -271,6 +271,7 @@ class AlgorithmRunner:
         assert self.grid.is_filled()
 
 
+<<<<<<< HEAD
     def start_random(self) -> None:
         """
         Starts the random algorithm and writes results for each iteration to a CSV file.
@@ -341,6 +342,41 @@ class AlgorithmRunner:
 
         self.breath_or_dijkstra()
 
+=======
+    def start_greedy(self) -> None:
+        """
+        Starts the greedy algorithm.
+        """
+        self.print_algorithm_text()
+        self.load_structures()
+        fill_grid_greedy(self.grid)
+
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
+
+        self.breath_or_dijkstra()
+
+        self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+        self.print_final_costs(self.grid.calc_costs())
+
+
+    def start_with_input(self) -> None:
+        """
+        Starts with existing output as input.
+        """
+        self.print_algorithm_text()
+        self.grid.read_in(f"data/outputs/output_district-{self.district}{self.choices.filename}.json")
+
+        assert self.grid.is_filled()
+
+        if self.choices.switches:
+            while switch_pairs(self.grid):
+                pass
+
+        self.breath_or_dijkstra()
+
+>>>>>>> 0dcefbfb2a4c678effd23a136b5a73c24bf49a5d
         self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
 
