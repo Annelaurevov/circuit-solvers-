@@ -62,7 +62,6 @@ class Choices:
 
     def run(self):
         while self.algorithms:
-            print(len(self.algorithms))
             algorithm = self.algorithms.popleft()
             algorithm(self.grid)
         
@@ -111,9 +110,15 @@ class Choices:
             if "-n" in args:
                 iterations = args[args.index("-n") + 1]
                 for _ in range(int(iterations)):
-                    self.add_algorithm(random_connect_till_connected)
+                    if "-s" in args:
+                        self.add_algorithm(random_connect_till_connected)
+                        self.add_algorithm(switch_pairs)
+                    else:
+                        self.add_algorithm(random_connect_till_connected)
             else:
                 self.add_algorithm(random_connect_till_connected)
+                if "-s" in args:
+                    self.add_algorithm(switch_pairs)
 
 
 

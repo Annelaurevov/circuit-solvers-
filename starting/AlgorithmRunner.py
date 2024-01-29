@@ -240,14 +240,13 @@ class AlgorithmRunner:
                 writer.writerow(row)
 
 
-    def start_random_iterations(self, i, grid_costs, shared_lowest):
-        amount = 1000
+    def start_random_iterations(self, amount, grid_costs, shared_lowest):
 
 
         grid = self.grid.copy()
         local_lowest = float('inf')
 
-        for _ in range(amount):
+        for i in range(amount):
             if self.choices.n != 1:
                 self.print_progress(i, self.choices.n)
 
@@ -295,9 +294,22 @@ class AlgorithmRunner:
             pool = multiprocessing.Pool(processes=num_processes)
 
             # Use multiprocessing to parallelize the loop
-            out = pool.starmap(self.start_random_iterations, [(i, grid_costs, lowest) for i in range(self.choices.n)])
+
+            n = self.choices.n
+            inputs = []
+
+            for i in range(num_processes):
+                if n//(num_processes - i) == 0:
+                    continue
+                inputs.append((n//(num_processes - i), grid_costs, lowest))
+                n -= n//(num_processes - i)
+
+            out = pool.starmap(self.start_random_iterations, inputs)
             self.grid = min(out, key=lambda x: x.calc_costs())
             self.grid.write_out(f"data/outputs/output_district-{self.district}.json")
+
+            print(f"{len(grid_costs)=}")
+
             # Close the pool to free resources
             pool.close()
             # Wait for all processes to finish
