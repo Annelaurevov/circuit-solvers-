@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
+from starting.arguments import arguments
 
-class Choices:
+class Interface:
     """
     Represents the user interface for choosing algorithm options.
 
@@ -156,8 +157,38 @@ class Choices:
         print("CSV:", self.csv.get())
         print("District:", self.district.get())
 
+        variables = list(vars(self).items()).copy()
+
+
+
         # Schedule the animation and window dismissal after 2 seconds
         self.root.after(200, self.perform_animation_and_dismiss)
+
+        # Return a list containing the arguments used
+        out = []
+        if self.algorithm.get() == "random":
+            out.append("-r")
+            out.append("-n")
+            out.append(self.n.get())
+
+        elif self.algorithm.get() == "greedy":
+            out.append("-g")
+        elif self.algorithm.get() == "file":
+            out.append("-f")
+            if self.filename.get():
+                out.append("-i")
+                out.append(self.filename.get())
+        
+        if self.dijkstra.get():
+            out.append("-d")
+        elif self.breath.get():
+            out.append("-b")
+            out.append("-m")
+            out.append(self.m.get())
+
+        out.append(self.district.get())
+
+        self.out = out
 
     def perform_animation_and_dismiss(self):
         """
@@ -240,7 +271,10 @@ class Choices:
         """
         self.root.mainloop()
 
+        return arguments(self.out)
+
 
 if __name__ == "__main__":
     app = Choices()
     app.run()
+    print(app.filename, app.algorithm)

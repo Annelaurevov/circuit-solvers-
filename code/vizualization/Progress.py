@@ -1,4 +1,5 @@
 import sys
+import os
 
 class Progress:
     def __init__(self):
@@ -15,7 +16,10 @@ class Progress:
         assert isinstance(maxval, int), "Update counters issue"
         self.progression[counter] = (value, maxval)
 
-    def print_counters(self, bars = 50):
+    def print_counters(self):
+        bars = round(os.get_terminal_size()[0]*2/3)
+        bars -= 9
+        bars -= len(str(self.counters))
         message = ""
         finished = True
         for counter in range(self.counters):
@@ -25,7 +29,7 @@ class Progress:
             devision = (bars * val) // maxval
             # print(devision)
             assert isinstance(val, int) and isinstance(maxval, int) and isinstance(devision, int)
-            message += f"Progression {counter:{len(str(self.counters))}}: [{'#'*devision}{' '*(bars - devision)}] {val}/{maxval}\n"
+            message += f"Core {counter:{len(str(self.counters))}}: [{'▇'*devision}{'░'*(bars - devision)}] {val}/{maxval}\n"
             if val != maxval:
                 finished = False
         
