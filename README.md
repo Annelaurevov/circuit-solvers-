@@ -105,7 +105,7 @@ Usage: python [option] [district]
 - Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
 
 <div align="center">
-    <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
+    <img src="data/images/interface.gif" alt="interface GIF" width="300"/>
 </div>
 
 
