@@ -387,6 +387,10 @@ class AlgorithmRunner:
 
         self.breath_or_dijkstra()
 
+        self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
+
+        self.print_final_costs(self.grid.calc_costs())
+
 
     def run(self) -> None:
         """
