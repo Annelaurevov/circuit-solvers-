@@ -44,14 +44,16 @@ connecten aan main branch(es)
 
 ### Gebruik
 
-Het programma kan worden aangeroepen met 'python main.py'
+- Het programma kan worden aangeroepen met 'python main.py'
 Hiermee wordt een interface gegeven en kan de gewenste combinatie gekozen worden:
 
 <div align="center">
     <img src="data/images/interface.gif" alt="interface GIF" width="300"/>
 </div>
 
-OF het aanroepen met cmd line argumenten na 'python main.py':
+<br>
+
+- Ook kan gebruik worden gemaakt met cmd line argumenten na 'python main.py':
 
 ```
 Usage: python [option] [district]
