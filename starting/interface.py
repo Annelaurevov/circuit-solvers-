@@ -170,7 +170,21 @@ class Interface:
             out.append("-m")
             out.append(self.m.get())
 
+        if self.visualize.get():
+            out.append("-v")
+
+        if self.hist.get():
+            out.append("-h")
+
+        if self.csv.get():
+            out.append("-c")
+
+        if self.output.get():
+            out.append("-o")
+            out.append(self.output.get())
+
         out.append(self.district.get())
+
 
         self.out = out
 
