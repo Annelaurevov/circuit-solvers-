@@ -141,23 +141,7 @@ class Interface:
     def on_button_click(self):
         """
         Callback for the 'Apply' button click event.
-        Prints the selected options and schedules animation and window dismissal.
         """
-        print("Algorithm:", self.algorithm.get())
-        print("Previous:", self.previous.get())
-        print("Filename:", self.filename.get())
-        print("N:", self.n.get())
-        print("Switches:", self.switches.get())
-        print("Breath:", self.breath.get())
-        print("M:", self.m.get())
-        print("Dijkstra:", self.dijkstra.get())
-        print("Output:", self.output.get())
-        print("Visualize:", self.visualize.get())
-        print("Hist:", self.hist.get())
-        print("CSV:", self.csv.get())
-        print("District:", self.district.get())
-
-        variables = list(vars(self).items()).copy()
 
 
 
@@ -195,7 +179,6 @@ class Interface:
         Placeholder function for animation logic.
         Displays a messagebox and dismisses the Tkinter window.
         """
-        messagebox.showinfo("Animation", "Heel leuk succes bericht!")
         self.root.destroy()
 
     def create_widgets(self):
