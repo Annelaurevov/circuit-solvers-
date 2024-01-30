@@ -19,6 +19,9 @@ class Choices:
         self.help_message = """
         Usage: python [option] [district]
 
+                    No options and district will show a GUI, prompting the user to select
+                    algorithms.
+
         -g          Selects the greedy algorithm to fill grid
         -r          Selects the random algorithm to fill grid
         -i          Selects existing file output as input to fill grid, default: most recent

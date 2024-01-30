@@ -1,160 +1,65 @@
+# File containing dijkstra algorithm
+
 import heapq
 from math import inf
+from code.classes.Grid import Grid
+from code.classes.Node import Node
 
-class Node:
-    def __init__(self, parent, house, position) -> None:
-        self.parents = [parent]
-        if parent is None:
-            self.parents = []
-        self.position = position
-        self.house = house
-
-
-    def __eq__(self, __value: object) -> bool:
-        return self.position == __value.position
-    
-    def __lt__(self, __value: object) -> bool:
-        return False
-    
-    def __hash__(self) -> int:
-        return id(self.position)
-
-    def __repr__(self) -> str:
-        return f"Node op {self.position}"
-
-
-
-class Node2:
-    def __init__(self, parent, house, position, value) -> None:
-        self.parents = [parent]
-        if parent is None:
-            self.parents = []
-        self.position = position
-        self.house = house
-        self.value = value
-
-    
-    def __lt__(self, __value: object) -> bool:
-        return self.value < __value.value
-    
-    def __hash__(self) -> int:
-        return id(self.position)
-
-    def __repr__(self) -> str:
-        return f"Node op {self.position}"
-
-
-def get_directions(node):
-    x, y = node.position
-    return [Node(node, node.house, (x+1, y)), Node(node, node.house, (x-1, y)),
-            Node(node, node.house, (x, y+1)), Node(node, node.house, (x, y-1))]
-
-
-def get_directions2(node, value):
-    x, y = node.position
-    return [Node2(node, node.house, (x+1, y), value+1), Node2(node, node.house, (x-1, y), value+1),
-            Node2(node, node.house, (x, y+1), value+1), Node2(node, node.house, (x, y-1), value+1)]
-
-
-def distance2(object1, object2):
-    "Returns the distance between two objects"
-    x1, y1 = object1.position
-    x2, y2 = object2.position
-    return abs(x1-x2) + abs(y1 - y2)
-
-
-def run_dijkstra_on_house(seen, house):
-    node = Node(None, house, house.position)
-    nodes = [(0, node)]
-    heapq.heapify(nodes)
-    checked_points = []
-
-    distance, new_node = heapq.heappop(nodes)
-    iterations = 0
-    while new_node not in seen:
-
-        iterations += 1
-        if new_node in checked_points:
-            distance, new_node = heapq.heappop(nodes)
-            continue
-
-        checked_points.append(new_node)
-        for direction in get_directions(new_node):
-            if direction.position == house.position:
-                continue
-            heapq.heappush(nodes, (distance + 1, direction))
-        distance, new_node = heapq.heappop(nodes)
-        if distance2(new_node.house, new_node.house.battery) < distance:
-            raise ValueError
-
-    node = new_node
-    while node.parents != []:
-        house = node.house
-        house.path.insert(1, node.position)
-        seen.append(node)
-        node = node.parents[0]
-
-
-
-
-def run_dijkstra(grid):
-    for battery in grid.batteries:
-        seen = [Node(None, house, house.position) for house in battery.houses]
-        seen = []
-        seen.append(Node(None, battery, battery.position))
-        houses = battery.houses.copy()
-        houses.sort(key=lambda x: distance2(x, battery))
-        for house in houses:
-            house.path = [house.position]
-            run_dijkstra_on_house(seen, house)
-        print("solved battery")
 
 
 def reset_node_grid(node_grid):
+    """
+    Sets all the nodes at distance \infty
+    """
     for row in node_grid:
         for node in row:
             node.parents = []
             node.value = inf
 
 
-def dijkstra_from_battery(grid):
+def dijkstra_from_battery(grid: Grid) -> None:
+    """
+    Runs the dijkstra algorithm from the battery
+    """
+
+    # Check all the batteries
     for battery in grid.batteries:
         houses = battery.houses.copy()
 
-        node_grid = [[Node2(None, None, (x, y), inf) for x in range(51)] for y in range(51)]
+        # Make a node grid
+
+        node_grid = [[Node(None, None, (x, y), inf) for x in range(51)] for y in range(51)]
         targets = []
 
         x, y = battery.position
         battery_node = node_grid[y][x]
+
+
+        # Start from battery
         seen = [battery_node]
 
+        # Set targets
         for house in houses:
             x, y = house.position
-            # print(x, y)
             house.path = [house.position]
             targets.append(node_grid[y][x])
 
-
-
-
-        
+        # While not all targets found
         while targets:
             reset_node_grid(node_grid)
             for node in seen:
                 node.value = 0
 
-            queue = seen.copy() # Slow I know
+            queue = seen.copy()
             heapq.heapify(queue)
 
-            not_found = True
-            # print(targets)
-            while not_found:
+
+            while node not in targets:
                 node = heapq.heappop(queue)
 
-                if node in targets:
-                    not_found = False
-                    break
                 x, y = node.position
+
+                # Add neighbours to heapqueue
                 if x > 0:
                     neighbour = node_grid[y][x-1]
                     if neighbour.value > node.value+1:
@@ -179,17 +84,18 @@ def dijkstra_from_battery(grid):
                         neighbour.value = node.value + 1
                         neighbour.parents = [node]
                         heapq.heappush(queue, neighbour)
-            
 
+            # Find house corresponding to the node
             for house in houses:
                 if house.position == node.position:
                     node.house = house
                     targets.remove(node)
                     seen.append(node)
                     break
-            
+
+            # Retrace path
             while node.parents:
                 node = node.parents[-1]
-                
+
                 seen.append(node)
                 house.path.append(node.position)
