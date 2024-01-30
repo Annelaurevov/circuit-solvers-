@@ -6,7 +6,7 @@ Groene energie, opgewekt door huishoudelijke installaties zoals zonnepanelen, cr
 
 ### Vereisten
 
-Deze codebase is volledig geschreven in Python 3.7. In requirements.txt staan alle benodigde packages om de code succesvol te draaien. Deze zijn gemakkelijk te installeren via pip dmv. de volgende instructie:
+Deze codebase is volledig geschreven in Python 3.10. In requirements.txt staan alle benodigde packages om de code succesvol te draaien. Deze zijn gemakkelijk te installeren via pip dmv. de volgende instructie:
 
 ```
 pip install -r requirements.txt
