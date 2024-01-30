@@ -91,7 +91,3 @@ class Battery:
         Returns a string representation of the battery.
         """
         return f"battery {self.id}"
-
-
-    def copy(self):
-        return deepcopy(self)

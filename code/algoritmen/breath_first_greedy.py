@@ -137,6 +137,8 @@ def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Ba
     """
     cheapest_config = find_cheapest(config_heap)
 
+    # print_progress(battery, cheapest_config)
+
     best_houses = [house for house in battery.houses if house.id in cheapest_config[1]]
     update_paths(best_houses, battery)
 
@@ -164,7 +166,6 @@ def breath_first_greedy_slow(grid: Grid, max_branches: int) -> None:
             add_config_costs(combination, battery, grid, config_heap)
 
         give_best_config(config_heap, battery)
-
         keep_unique_paths(battery)
 
 
@@ -181,13 +182,13 @@ def run_configurations(combination: List[List[House]], grid: Grid, battery: Batt
         List[Tuple[int, Tuple[int, ...]]]: List of tuples representing costs and configurations.
     """
     local_heap = []
-    gridcopy = grid.copy()
-    batterycopy = battery.copy()
+    #gridcopy = grid.copy()
+    # batterycopy = battery.copy()
 
     for main_houses in combination:
-        update_paths(main_houses, batterycopy)
-        keep_unique_paths(batterycopy)
-        add_config_costs(main_houses, batterycopy, gridcopy, local_heap)
+        update_paths(main_houses, battery)
+        keep_unique_paths(battery)
+        add_config_costs(main_houses, battery, grid, local_heap)
 
     return local_heap
 
@@ -222,9 +223,6 @@ def breath_first_greedy_fast(grid: Grid, max_branches: int) -> None:
     """
     for battery in grid.batteries:
         with multiprocessing.Manager() as manager:
-        
-            config_heap = []
-
             all_combinations = generate_combinations(battery.houses, max_branches)
 
             num_processes = multiprocessing.cpu_count()
@@ -239,16 +237,19 @@ def breath_first_greedy_fast(grid: Grid, max_branches: int) -> None:
                 inputs.append((combination, grid, battery))
 
             results = pool.starmap(run_configurations, inputs)
-            for result in results:
-                config_heap.extend(result)
-
             pool.close()
             pool.join()
 
-            cheapest_config = find_cheapest(config_heap)
-            print_progress(battery, cheapest_config)
+            # Process the results after joining the pool
+            config_heap = [item for result in results for item in result]
+            heapq.heapify(config_heap)
+
+            smallest = config_heap[0]
+            print_progress(battery, smallest)
             give_best_config(config_heap, battery)
             keep_unique_paths(battery)
+
+
 
 
 
