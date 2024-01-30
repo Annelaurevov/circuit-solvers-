@@ -48,7 +48,7 @@ Het programma kan worden aangeroepen met 'python main.py'
 Hiermee wordt een interface gegeven en kan de gewenste combinatie gekozen worden:
 
 <div align="center">
-    <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
+    <img src="data/images/interface.gif" alt="interface GIF" width="300"/>
 </div>
 
 OF het aanroepen met cmd line argumenten na 'python main.py':
@@ -105,7 +105,7 @@ Usage: python [option] [district]
 - Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
 
 <div align="center">
-    <img src="data/images/interface.gif" alt="interface GIF" width="300"/>
+    <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
 </div>
 
 
