@@ -1,5 +1,6 @@
 # File containing Grid class
 
+from Typing import Tuple, List
 from code.classes.House import House
 from code.classes.Battery import Battery
 from copy import deepcopy
@@ -33,8 +34,8 @@ class Grid:
         Args:
         - district (int): District number.
         """
-        self.houses: list[House] = []
-        self.batteries: list[Battery] = []
+        self.houses: List[House] = []
+        self.batteries: List[Battery] = []
         self.size: int = 50
         self.cable_costs: int = 9
         self.battery_costs: int = 5000
@@ -74,7 +75,7 @@ class Grid:
         with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                position: tuple[int, int] = tuple(map(int, row['positie'].split(",")))
+                position: Tuple[int, int] = Tuple(map(int, row['positie'].split(",")))
                 capacity: float = float(row['capaciteit'])
                 battery: Battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)
@@ -140,7 +141,7 @@ class Grid:
         - path (str): Path to the output JSON file.
         """
         with open(path, 'w', encoding='utf-8') as f:
-            data: list[dict] = []
+            data: List[dict] = []
 
             district_data: dict = dict()
             district_data["district"] = self.district
@@ -153,7 +154,7 @@ class Grid:
                 battery_data["location"] = f"{battery.position[0]},{battery.position[1]}"
                 battery_data["capacity"] = battery.full
 
-                houses: list[dict] = []
+                houses: List[dict] = []
                 for house in battery.houses:
                     house_data: dict = dict()
                     house_data["location"] = f"{house.position[0]},{house.position[1]}"
@@ -178,19 +179,19 @@ class Grid:
         battery_id = 0
         house_id = 0
         for location_data in data[1:]:
-            position = tuple(map(int, location_data['location'].split(',')))
+            position = Tuple(map(int, location_data['location'].split(',')))
             capacity = location_data["capacity"]
             battery = Battery(position, capacity, battery_id)
 
             battery_id += 1
 
             for house_data in location_data["houses"]:
-                position = tuple(map(int, house_data['location'].split(',')))
+                position = Tuple(map(int, house_data['location'].split(',')))
                 house = House(position, house_data["output"], house_id)
                 house_id += 1
                 house.path = []
                 for cable in house_data["cables"]:
-                    house.path.append(tuple(map(int, cable.split(","))))
+                    house.path.append(Tuple(map(int, cable.split(","))))
 
                 house.battery = battery
                 battery.houses.append(house)

@@ -1,5 +1,7 @@
 # File containing House class
 
+from Typing import Tuple, List
+
 class House:
     """
     Represents a house in the smart grid.
@@ -11,7 +13,7 @@ class House:
     - make_path(position): Makes a path to a certain position
     - get_path_length(): Returns the length of the path
     """
-    def __init__(self, position: tuple[int, int], capacity: float, house_id: int):
+    def __init__(self, position: Tuple[int, int], capacity: float, house_id: int):
         """
         Initialize a House object.
 
@@ -20,9 +22,9 @@ class House:
         - capacity (float): Capacity of the house.
         - house_id (int): Unique identifier for the house.
         """
-        self.position: tuple[int, int] = position
+        self.position: Tuple[int, int] = position
         self.capacity: float = capacity
-        self.path: list[tuple[int, int]] = [position]
+        self.path: List[Tuple[int, int]] = [position]
         self.battery = None
         self.id: int = house_id
 

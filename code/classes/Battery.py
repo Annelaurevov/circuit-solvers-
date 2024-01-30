@@ -1,5 +1,7 @@
 # File containing Battery class
 
+from Typing import Tuple, List
+
 from code.classes.House import House
 
 class Battery:
@@ -14,7 +16,7 @@ class Battery:
     - add(house) -> bool: Adds a house to the battery if there is enough capacity.
     - remove(house) -> None: Removes a selected house from the battery.
     """
-    def __init__(self, position: tuple[int, int], full_capacity: float, battery_id: int):
+    def __init__(self, position: Tuple[int, int], full_capacity: float, battery_id: int):
         """
         Initialize a Battery object.
 
@@ -26,9 +28,9 @@ class Battery:
         self.full: float = full_capacity
         self.capacity: float = full_capacity
         self.id: int = battery_id
-        self.position: tuple[int, int] = position
+        self.position: Tuple[int, int] = position
         self.cost: int = 5000
-        self.houses: list[House] = []
+        self.houses: List[House] = []
 
 
     def can_add(self, house: House) -> bool:

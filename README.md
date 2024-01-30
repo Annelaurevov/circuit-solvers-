@@ -57,6 +57,7 @@ Usage: python [option] [district]
         -o <name>   Give name for the output file 
         
         -v          Visualizes the result with pygame
+        -c          Writes out random result to csv file in outputs
         -p          Shows a histogram of random iterations [-r -n <amount>]
 
         -h          Shows this message
@@ -89,7 +90,10 @@ Usage: python [option] [district]
 - Met de interactieve pygame visualisatie kan het smart grid worden gevisualiseerd
 - Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
 
-<img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
+<div align="center">
+    <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
+</div>
+
 
 ***
 
