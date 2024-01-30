@@ -267,4 +267,6 @@ class Interface:
         """
         self.root.mainloop()
 
-        
+        if not self.out:
+            return False
+        return arguments(self.out)
