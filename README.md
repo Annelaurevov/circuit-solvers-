@@ -18,6 +18,8 @@ Of via conda:
 conda install --file requirements.txt
 ```
 
+** De code werkt alleen via een linux environment: (ubuntu / macos M1+) **
+
 ***
 
 ### Algoritmes
@@ -33,6 +35,10 @@ conda install --file requirements.txt
 connecten aan main branch(es)
 - `Dijkstra`: Verbind kabels met dijkstra's kortste pad
 
+
+##### note:
+- Multiple algorithms can be combined
+- Random can use mutliple iterations: Uses **multiprocessing**
 ***
 
 ### Gebruik

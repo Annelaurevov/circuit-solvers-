@@ -1,6 +1,6 @@
 # File containing Battery class
 
-from Typing import Tuple, List
+from typing import Tuple, List
 
 from code.classes.House import House
 

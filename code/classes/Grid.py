@@ -1,6 +1,6 @@
 # File containing Grid class
 
-from Typing import Tuple, List
+from typing import Tuple, List
 from code.classes.House import House
 from code.classes.Battery import Battery
 from copy import deepcopy
@@ -75,7 +75,7 @@ class Grid:
         with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                position: Tuple[int, int] = Tuple(map(int, row['positie'].split(",")))
+                position: Tuple[int, int] = tuple(map(int, row['positie'].split(",")))
                 capacity: float = float(row['capaciteit'])
                 battery: Battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)
@@ -179,19 +179,19 @@ class Grid:
         battery_id = 0
         house_id = 0
         for location_data in data[1:]:
-            position = Tuple(map(int, location_data['location'].split(',')))
+            position = tuple(map(int, location_data['location'].split(',')))
             capacity = location_data["capacity"]
             battery = Battery(position, capacity, battery_id)
 
             battery_id += 1
 
             for house_data in location_data["houses"]:
-                position = Tuple(map(int, house_data['location'].split(',')))
+                position = tuple(map(int, house_data['location'].split(',')))
                 house = House(position, house_data["output"], house_id)
                 house_id += 1
                 house.path = []
                 for cable in house_data["cables"]:
-                    house.path.append(Tuple(map(int, cable.split(","))))
+                    house.path.append(tuple(map(int, cable.split(","))))
 
                 house.battery = battery
                 battery.houses.append(house)

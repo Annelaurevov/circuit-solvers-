@@ -1,6 +1,6 @@
 # File containing House class
 
-from Typing import Tuple, List
+from typing import Tuple, List
 
 class House:
     """
