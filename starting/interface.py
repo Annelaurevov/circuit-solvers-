@@ -160,9 +160,9 @@ class Interface:
         elif self.algorithm.get() == "greedy":
             out.append("-g")
         elif self.algorithm.get() == "file":
-            out.append("-f")
+            out.append("-i")
             if self.filename.get():
-                out.append("-i")
+                out.append("-f")
                 out.append(self.filename.get())
         
         if self.switches.get():
@@ -278,4 +278,5 @@ class Interface:
 
         if not self.out:
             return False
+        print(self.out)
         return arguments(self.out)
