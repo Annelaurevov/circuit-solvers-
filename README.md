@@ -86,9 +86,10 @@ Usage: python [option] [district]
 
 ### Visualisatie
 
-Met de interactieve pygame visualisatie kan het smart grid worden gevisualiseerd en met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
+- Met de interactieve pygame visualisatie kan het smart grid worden gevisualiseerd
+- Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
 
-![Funny Cat GIF](data/images/demonstration.gif)
+<img src="data/images/demonstration.gif" alt="Visualisation GIF" width="300"/>
 
 ***
 
