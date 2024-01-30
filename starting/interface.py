@@ -162,8 +162,14 @@ class Interface:
                 out.append("-i")
                 out.append(self.filename.get())
         
+        if self.switches.get():
+            out.append("-s")
+
+
         if self.dijkstra.get():
             out.append("-d")
+
+
         elif self.breath.get():
             out.append("-b")
             out.append("-m")
@@ -264,9 +270,3 @@ class Interface:
         if not self.out:
             return False
         return arguments(self.out)
-
-
-if __name__ == "__main__":
-    app = Choices()
-    app.run()
-    print(app.filename, app.algorithm)
