@@ -27,6 +27,8 @@ class Interface:
         self.root: tk.Tk = tk.Tk()
         self.root.title("Choose algorithms")
 
+        self.out = []
+
         self.algorithm: tk.StringVar = tk.StringVar(value="random")
         self.filename: tk.StringVar = tk.StringVar(value="")
         self.n: tk.StringVar = tk.StringVar(value="1")
@@ -174,7 +176,7 @@ class Interface:
             out.append("-v")
 
         if self.hist.get():
-            out.append("-h")
+            out.append("-p")
 
         if self.csv.get():
             out.append("-c")
@@ -268,6 +270,8 @@ class Interface:
         """
         self.root.mainloop()
 
+        if not self.out:
+            return False
         return arguments(self.out)
 
 

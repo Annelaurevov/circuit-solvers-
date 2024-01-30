@@ -18,6 +18,9 @@ def parse_command_line():
     if len(sys.argv) == 1:
         choices = Interface()
         choices = choices.run()
+        if not choices:
+            print(help.help_message)
+            sys.exit()
 
     else:
         choices = sys.argv[1:]
@@ -25,12 +28,7 @@ def parse_command_line():
 
     district = choices.district
 
-    print("District: ", district, type(district))
     grid = Grid(district)
-
-    # if choices.help:
-    #     print(choices.help_message)
-    #     sys.exit()
 
     return choices, district, grid
 
