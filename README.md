@@ -33,7 +33,7 @@ conda install --file requirements.txt
 #### OPTIMALISEER DELEN VAN KABELS
 - `Breath first greedy`: optimaliseert gevuld grid door huizen 
 connecten aan main branch(es)
-- `Dijkstra`: Verbind kabels met dijkstra's kortste pad
+- `Dijkstra`: optimaliseert gevuld grid door aanleggen kabels met dijkstra's kortste pad
 
 
 ##### note:
@@ -44,7 +44,7 @@ connecten aan main branch(es)
 
 ### Gebruik
 
-- Het programma kan worden aangeroepen met 'python main.py'
+- Het programma kan worden aangeroepen met 'python main.py' <br>
 Hiermee wordt een interface gegeven en kan de gewenste combinatie gekozen worden:
 
 <div align="center">
@@ -121,8 +121,8 @@ De hierop volgende lijst beschrijft de belangrijkste mappen en files in het proj
 - **/code**: bevat alle code van dit project
   - **/code/algoritmen**: bevat de code voor algoritmes
   - **/code/classes**: bevat de drie benodigde classes voor deze case
-  - **/code/vizualization**: bevat de pygame code voor de visualisatie
-  - **/code/IO **: bevat de input/output operaties voor het runnen van de main
+  - **/code/vizualization**: bevat de pygame code voor de visualisatie en progoressiebalk
+  - **/code/IO**: bevat de input/output operaties voor het runnen van de main
 - **/data**: bevat de verschillende databestanden die nodig zijn om het grid te vullen en te visualiseren
 
 ***
