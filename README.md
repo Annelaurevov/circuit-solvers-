@@ -36,9 +36,10 @@ connecten aan main branch(es)
 - `Dijkstra`: optimaliseert gevuld grid door aanleggen kabels met dijkstra's kortste pad
 
 
-##### note:
+#### EXTRA INFO:
 - Meerdere algorithmen kunnen worden gecombineerd
 - Random kan met meerdere iteraties worden gebruikt, dit maakt gebruik van **multiprocessing**
+- Ook het runnen van breath first maakt gebruik van **multiprocessing** dit gebeurd echter niet bij het runnen van de random + breathfirst
 
 ***
 

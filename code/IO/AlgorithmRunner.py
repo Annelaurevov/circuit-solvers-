@@ -12,7 +12,7 @@ from code.IO.arguments import Choices
 from code.algoritmen.greedy import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
-from code.algoritmen.breath_first_greedy import breath_first_greedy
+from code.algoritmen.breath_first_greedy import breath_first_greedy_slow, breath_first_greedy_fast
 from code.algoritmen.dijkstra import dijkstra_from_battery
 
 from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
@@ -203,7 +203,7 @@ class AlgorithmRunner:
         Prints out desired text.
         """
         if self.choices.breath:
-            breath_first_greedy(self.grid, self.choices.m)
+            breath_first_greedy_fast(self.grid, self.choices.m)
         elif self.choices.dijkstra:
             dijkstra_from_battery(self.grid)
 
@@ -261,15 +261,16 @@ class AlgorithmRunner:
             progress_bar.update_counters(progress_id, i+1)
             progress_bar.print_counters()
                 
-                # print(self.progress_bar.counters)
+            # print(self.progress_bar.counters)
             while not random_connect(grid):
                 grid.reset()
 
-            while self.choices.switches and switch_pairs(grid):
-                pass
+            if self.choices.switches:
+                while switch_pairs(grid):
+                    pass
 
             if self.choices.breath:
-                breath_first_greedy(grid, self.choices.m)
+                breath_first_greedy_slow(grid, self.choices.m)
             elif self.choices.dijkstra:
                 dijkstra_from_battery(grid)
 

@@ -1,7 +1,7 @@
 # File containing Battery class
 
 from typing import Tuple, List
-
+from copy import deepcopy
 from code.classes.House import House
 
 class Battery:
@@ -91,3 +91,7 @@ class Battery:
         Returns a string representation of the battery.
         """
         return f"battery {self.id}"
+
+
+    def copy(self):
+        return deepcopy(self)

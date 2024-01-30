@@ -10,6 +10,10 @@ from code.classes.House import House
 from code.classes.Battery import Battery
 from code.classes.Grid import Grid
 
+from code.vizualization.Progress import Progress
+import multiprocessing
+from functools import partial
+
 
 def battery_costs(battery: Battery, grid: Grid) -> int:
     """
@@ -137,7 +141,7 @@ def give_best_config(config_heap: List[Tuple[int, Tuple[int, ...]]], battery: Ba
     update_paths(best_houses, battery)
 
 
-def breath_first_greedy(grid: Grid, max_branches: int) -> None:
+def breath_first_greedy_slow(grid: Grid, max_branches: int) -> None:
     """
     Runs the algorithm using a breath-first greedy approach.
 
@@ -156,8 +160,96 @@ def breath_first_greedy(grid: Grid, max_branches: int) -> None:
         for combination in houses:
             update_paths(combination, battery)
             keep_unique_paths(battery)
+
             add_config_costs(combination, battery, grid, config_heap)
 
         give_best_config(config_heap, battery)
 
         keep_unique_paths(battery)
+
+
+def run_configurations(combination: List[List[House]], grid: Grid, battery: Battery) -> List[Tuple[int, Tuple[int, ...]]]:
+    """
+    Run configurations for a given combination of main houses, updating paths and costs.
+
+    Args:
+        combination (List[List[House]]): List of combinations of main houses forming the main branch.
+        grid (Grid): The grid containing information about houses, batteries, and costs.
+        battery (Battery): The battery for which to calculate and update costs.
+
+    Returns:
+        List[Tuple[int, Tuple[int, ...]]]: List of tuples representing costs and configurations.
+    """
+    local_heap = []
+    gridcopy = grid.copy()
+    batterycopy = battery.copy()
+
+    for main_houses in combination:
+        update_paths(main_houses, batterycopy)
+        keep_unique_paths(batterycopy)
+        add_config_costs(main_houses, batterycopy, gridcopy, local_heap)
+
+    return local_heap
+
+
+def print_progress(battery: Battery, cheapest_config: Tuple[int, Tuple[int, ...]]) -> None:
+    """
+    Prints progress when the cheapest configuration for a battery is found.
+
+    Args:
+    - battery (Battery): The battery for which the progress is printed.
+    - cheapest_config (Tuple[int, Tuple[int, ...]]): The cheapest configuration information.
+
+    Returns:
+    None
+    """
+    if cheapest_config:
+        print("Battery: " + str(battery.id + 1))
+        print("Cheapest house configuration:", ' & '.join(str(id) for id in cheapest_config[1]))
+        print("Price:", str(cheapest_config[0]) + "\n")  # Convert to string before concatenating
+
+
+def breath_first_greedy_fast(grid: Grid, max_branches: int) -> None:
+    """
+    Runs the algorithm using a breath-first greedy approach with multiprocessing.
+
+    Args:
+    - grid (Grid): The grid containing information about houses, batteries, and costs.
+    - max_branches (int): The maximum depth for generating combinations.
+
+    Returns:
+    None
+    """
+    for battery in grid.batteries:
+        with multiprocessing.Manager() as manager:
+        
+            config_heap = []
+
+            all_combinations = generate_combinations(battery.houses, max_branches)
+
+            num_processes = multiprocessing.cpu_count()
+
+            pool = multiprocessing.Pool(processes=num_processes)
+
+            chunk_size = len(all_combinations) // num_processes
+            all_partial_combinations = [all_combinations[i:i + chunk_size] for i in range(0, len(all_combinations), chunk_size)]
+
+            inputs = []
+            for combination in all_partial_combinations:
+                inputs.append((combination, grid, battery))
+
+            results = pool.starmap(run_configurations, inputs)
+            for result in results:
+                config_heap.extend(result)
+
+            pool.close()
+            pool.join()
+
+            cheapest_config = find_cheapest(config_heap)
+            print_progress(battery, cheapest_config)
+            give_best_config(config_heap, battery)
+            keep_unique_paths(battery)
+
+
+
+
