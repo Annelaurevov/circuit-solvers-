@@ -18,7 +18,7 @@ Of via conda:
 conda install --file requirements.txt
 ```
 
-** De code werkt alleen via een linux environment: (ubuntu / macos M1+) **
+**De code werkt alleen via een linux environment: (ubuntu / macos M1+)**
 
 ***
 
@@ -122,6 +122,7 @@ De hierop volgende lijst beschrijft de belangrijkste mappen en files in het proj
   - **/code/algoritmen**: bevat de code voor algoritmes
   - **/code/classes**: bevat de drie benodigde classes voor deze case
   - **/code/vizualization**: bevat de pygame code voor de visualisatie
+  - **/code/IO **: bevat de input/output operaties voor het runnen van de main
 - **/data**: bevat de verschillende databestanden die nodig zijn om het grid te vullen en te visualiseren
 
 ***

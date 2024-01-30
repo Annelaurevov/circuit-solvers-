@@ -1,9 +1,9 @@
 import sys
 from code.classes.Grid import Grid
-from starting.arguments import arguments, Choices
-from starting.AlgorithmRunner import AlgorithmRunner
+from code.IO.arguments import arguments, Choices
+from code.IO.AlgorithmRunner import AlgorithmRunner
 from copy import deepcopy
-from starting.interface import Interface
+from code.IO.Interface import Interface
 import time
 
 def parse_command_line():
