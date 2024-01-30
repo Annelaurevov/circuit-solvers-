@@ -2,7 +2,7 @@
 
 Groene energie, opgewekt door huishoudelijke installaties zoals zonnepanelen, creëert vaak overschotten. Om deze pieken in energieproductie te beheren, worden batterijen gebruikt. Zo wordt zelfvoorziening efficiënter. Met het smart grid worden huizen via kabels gekoppeld aan een batterij. Voor een feasibility study zijn drie dummy-woonwijken opgesteld, met daarin vijf batterijen. De huizen hebben zonnepanelen met een maximale output, de batterijen hebben een maximale capaciteit. Het leggen van kabels levert kosten op, evenals de batterij. Met dit algoritme wordt geprobeerd om de kabels optimaal van huis tot batterij te verbinden en de kosten zo laag mogelijk te houden.
 
-## Aan de slag
+***
 
 ### Vereisten
 
@@ -17,6 +17,23 @@ Of via conda:
 ```
 conda install --file requirements.txt
 ```
+
+***
+
+### Algoritmes
+#### GRID VULLEN
+- `Greedy`: vult het hele grid op greedy mannier
+- `Random`: vult het hele grid op random mannier
+
+#### OPTIMALISATIE
+- `Switch Pairs`: optimaliseert gevuld grid met wisselen van huizen
+
+#### OPTIMALISEER DELEN VAN KABELS
+- `Breath first greedy`: optimaliseert gevuld grid door huizen 
+connecten aan main branch(es)
+- `Dijkstra`: Verbind kabels met dijkstra's kortste pad
+
+***
 
 ### Gebruik
 
@@ -65,8 +82,13 @@ Usage: python [option] [district]
 - *Random Algorithm met 10 iterations en Histogram op district 1:* `python main.py '-r' '-n' 10 '-p' 1`
 - *Breath-First Greedy Algorithm op previous run file met 3 main branches en Visualization, met 'important' als output naam op district 2:* `python main.py '-i' '-b' '-m' 3 '-o' important '-v' 2`
 
-#### Visualisatie
-Met de visualisatie kan over een batterij worden gehoverd om meer informatie te krijgen.
+***
+
+### Visualisatie
+
+Met de interactieve pygame visualisatie kan het smart grid worden gevisualiseerd en met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen
+
+***
 
 
 ### Structuur
@@ -79,7 +101,9 @@ De hierop volgende lijst beschrijft de belangrijkste mappen en files in het proj
   - **/code/vizualization**: bevat de pygame code voor de visualisatie
 - **/data**: bevat de verschillende databestanden die nodig zijn om het grid te vullen en te visualiseren
 
-## Auteurs
+***
+
+### Auteurs
 - Jens Bloemen
 - Annelaure van Overbeeke
 - Salomé Poulain
