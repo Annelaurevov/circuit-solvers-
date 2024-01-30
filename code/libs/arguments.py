@@ -1,7 +1,11 @@
 import sys
+from typing import List
 
 class Choices:
     def __init__(self):
+        """
+        Initialize Choices class with default values.
+        """
         self.algorithm = None
         self.filename = ""
         self.n = 1
@@ -40,7 +44,13 @@ class Choices:
         """
 
 
-def arguments(args):
+def arguments(args: List[str]) -> Choices:
+    """
+    Parse command line arguments and return Choices object with selected options.
+
+    Args:
+        args (List[str]): List of command line arguments.
+    """
     choices = Choices()
 
     if "-h" in args:
