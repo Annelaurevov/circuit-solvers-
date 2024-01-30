@@ -7,6 +7,9 @@ def get_average(data: List[Union[int, float]]) -> float:
 
     Args:
         data (List[Union[int, float]]): A list of numerical data.
+
+    Returns:
+        float: The average value of the data.
     """
     return sum(data) / len(data)
 
@@ -16,6 +19,9 @@ def get_deviation(data: List[Union[int, float]]) -> float:
 
     Args:
         data (List[Union[int, float]]): A list of numerical data.
+
+    Returns:
+        float: The standard deviation of the data.
     """
     S2 = 0
 
@@ -33,6 +39,9 @@ def get_low(data: List[Union[int, float]]) -> Union[int, float]:
 
     Args:
         data (List[Union[int, float]]): A list of numerical data.
+
+    Returns:
+        Union[int, float]: The lowest value in the data.
     """
     return min(data)
 
@@ -42,5 +51,8 @@ def get_high(data: List[Union[int, float]]) -> Union[int, float]:
 
     Args:
         data (List[Union[int, float]]): A list of numerical data.
+
+    Returns:
+        Union[int, float]: The highest value in the data.
     """
     return max(data)
