@@ -37,13 +37,21 @@ connecten aan main branch(es)
 
 
 ##### note:
-- Multiple algorithms can be combined
-- Random can use mutliple iterations: Uses **multiprocessing**
+- Meerdere algorithmen kunnen worden gecombineerd
+- Random kan met meerdere iteraties worden gebruikt, dit maakt gebruik van **multiprocessing**
+
 ***
 
 ### Gebruik
 
-Het programma kan gerund worden door aanroepen van:
+Het programma kan worden aangeroepen met 'python main.py'
+Hiermee wordt een interface gegeven en kan de gewenste combinatie gekozen worden:
+
+<div align="center">
+    <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>
+</div>
+
+OF het aanroepen met cmd line argumenten na 'python main.py':
 
 ```
 Usage: python [option] [district]
