@@ -144,11 +144,8 @@ class Interface:
         """
         Callback for the 'Apply' button click event.
         """
-
-
-
         # Schedule the animation and window dismissal after 2 seconds
-        self.root.after(200, self.perform_animation_and_dismiss)
+        self.root.after(500, self.root.destroy())
 
         # Return a list containing the arguments used
         out = []
@@ -189,13 +186,7 @@ class Interface:
 
 
         self.out = out
-
-    def perform_animation_and_dismiss(self):
-        """
-        Placeholder function for animation logic.
-        Displays a messagebox and dismisses the Tkinter window.
-        """
-        self.root.destroy()
+        
 
     def create_widgets(self):
         """

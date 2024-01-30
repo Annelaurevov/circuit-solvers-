@@ -48,8 +48,9 @@ def arguments(args):
         sys.exit()
         return
 
-    if args.count("-r") + args.count("-g") + args.count("-i") != 1:
-        raise SyntaxError("Exactly one of -r, -g, or -i should be selected")
+    if len(args) > 2:
+        if args.count("-r") + args.count("-g") + args.count("-i") != 1:
+            raise SyntaxError("Exactly one of -r, -g, or -i should be selected")
 
     if "-g" in args:
         choices.algorithm = "greedy"
