@@ -54,6 +54,9 @@ def visualize(district_number: int) -> None:
         Args:
         - x (int): X-coordinate in the grid.
         - y (int): Y-coordinate in the grid.
+
+        Returns:
+        Tuple[int, int]: The on-screen pixel coordinates.
         """
         space_x = (gridsize[0] - 50) // 2 * box_width
         space_y = (gridsize[1] - 50) // 2 * box_width
@@ -72,6 +75,9 @@ def visualize(district_number: int) -> None:
             - The base cost is calculated as 5000 * 5, assuming a fixed price for each battery and a total of 5 batteries.
             - Additional costs are calculated based on the length of cables connected to each house. 
             Each unit length of cable incurs a cost of 9.
+
+        Returns:
+        int: The total cost associated with the selected battery.
         """
         total_cost = 0
 
@@ -95,6 +101,9 @@ def visualize(district_number: int) -> None:
         Notes:
             - This function computes the total output power provided by the selected battery based on connected houses.
             - It sums up the output power of each connected house.
+
+        Returns:
+        float: The total output power associated with the selected battery.
         """
         total_output = 0
         
@@ -245,6 +254,9 @@ def visualize(district_number: int) -> None:
 
         Args:
         - location: Tuple (x, y) specifying the mouse position.
+
+        Returns:
+        int: The ID of the battery over which the mouse is positioned.
         """
         coordinates = [get_on_screen_coordinates(*map(int, location_data['location'].split(','))) for location_data in data[1:]]
         for i in range(len(coordinates)):
