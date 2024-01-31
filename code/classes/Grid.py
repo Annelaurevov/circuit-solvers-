@@ -83,8 +83,9 @@ class Grid:
 
 
     def copy(self):
-
-
+        """
+        Returns a copy of itself
+        """
         return deepcopy(self)
 
 
@@ -194,7 +195,7 @@ class Grid:
                     house.path.append(tuple(map(int, cable.split(","))))
 
                 house.battery = battery
-                battery.houses.append(house)
+                battery.add(house)
 
                 self.houses.append(house)
             self.batteries.append(battery)
