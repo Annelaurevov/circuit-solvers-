@@ -252,6 +252,9 @@ class AlgorithmRunner:
                 while switch_pairs(self.grid):
                     pass
 
+
+
+
             if self.choices.breath:
                 breath_first_greedy_slow(grid, self.choices.m)
             elif self.choices.dijkstra:
@@ -267,7 +270,9 @@ class AlgorithmRunner:
         if local_lowest < shared_lowest.value:
             shared_lowest.value = local_lowest
 
-        assert grid.is_filled()
+        assert minimum_grid.is_filled()
+
+
         return minimum_grid, grid_costs
 
 
@@ -276,8 +281,6 @@ class AlgorithmRunner:
         """
         Starts the random algorithm and writes results for each iteration to a CSV file.
         """
-
-        global progress_bar
 
         self.print_algorithm_text()
         self.load_structures()
@@ -304,8 +307,6 @@ class AlgorithmRunner:
                 if n//(num_processes - i) == 0:
                     continue
                 progress_id = self.progress_bar.add_counter(n//(num_processes - i))
-                # print(f"{progress_bar.progression=}")
-                # print(f"{progress_id=}")
                 inputs.append((n//(num_processes - i), grid_costs, lowest, progress_id))
                 n -= n//(num_processes - i)
 
@@ -320,6 +321,8 @@ class AlgorithmRunner:
 
             # Get the minimum grid based on calc_costs()
             self.grid = min(min_grids, key=lambda x: x.calc_costs())
+
+
             self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
 
             # Close the pool to free resources
