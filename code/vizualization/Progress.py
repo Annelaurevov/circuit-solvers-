@@ -128,8 +128,9 @@ class Progress:
         for counter in range(self.counters):
             val, maxval = self.progression[counter]
             division = (bars * val) // maxval
-            message += f"Core {counter:{len(str(self.counters))}}: \
-                [{'▇' * division}{'░' * (bars - division)}] {val}/{maxval}\n"
+            message += (f"Core {counter:{len(str(self.counters))}}: "
+                        f"[{'▇' * division}{'░' * (bars - division)}] "
+                        f"{val}/{maxval}\n")
 
         if self.finished():
             sys.stdout.write(message)
