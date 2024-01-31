@@ -242,7 +242,7 @@ class AlgorithmRunner:
 
         for i in range(amount):
             progress_bar.update_counters(progress_id, i+1)
-            progress_bar.print_counters()
+            progress_bar.print_counters(progress_id)
                 
             # print(self.progress_bar.counters)
             while not random_connect(grid):

@@ -26,11 +26,22 @@ class Progress:
         assert isinstance(maxval, int), "Update counters issue"
         self.progression[counter] = (value, maxval)
 
-    def print_counters(self, dt = 0.1):
+
+    def get_first_not_finished(self):
+        for counter in range(self.counters):
+            val, maxval = self.progression[counter]
+            if val != maxval:
+                return counter
+
+
+    def print_counters(self, progress_id):
         """
         Prints the counters as progressbars
         optional set dt as time to update
         """
+        if progress_id != self.get_first_not_finished():
+            return False
+
         bars = round(os.get_terminal_size()[0]*2/3)
         bars -= 9
         bars -= len(str(self.counters))
