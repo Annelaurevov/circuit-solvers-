@@ -1,0 +1,4 @@
+tk
+pygame
+typing
+
