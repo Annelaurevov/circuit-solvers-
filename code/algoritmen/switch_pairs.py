@@ -1,9 +1,12 @@
 # File containing function with Algorithm that switches pairs of houses
 
 from code.algoritmen.manhattan_path import manhattan_path as path
+from typing_extensions import TYPE_CHECKING
+
+from code.classes.Grid import Grid
 
 
-def switch_pairs(grid: object) -> bool:
+def switch_pairs(grid: Grid) -> bool:
     """
     Switch pairs of houses between batteries to optimize
         the grid configuration.
@@ -41,6 +44,10 @@ def switch_pairs(grid: object) -> bool:
             current_cost = grid.calc_costs()
 
             # Temporarily remove houses from their batteries for switching
+
+            assert battery1 is not None
+            assert battery2 is not None
+
             battery1.remove(house1)
             battery2.remove(house2)
 

@@ -1,11 +1,13 @@
-# File containing function with Algorithm that randomly connects 
-    # houses and batteries
+"""File containing function with Algorithm that randomly connects
+houses and batteries
+"""
 
-from code.algoritmen.manhattan_path import manhattan_path as path
 import random
+from code.algoritmen.manhattan_path import manhattan_path as path
+from code.classes.Grid import Grid
 
 
-def random_connect(grid: object) -> bool:
+def random_connect(grid: Grid) -> bool:
     """
     Randomly connects houses to batteries in the grid.
 

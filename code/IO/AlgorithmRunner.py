@@ -119,12 +119,12 @@ class AlgorithmRunner:
 
             if self.choices.switches:
                 print("- optimizing each iteration with \
-                    switch pairs algorithm")
+switch pairs algorithm")
 
             if self.choices.breath:
                 print("- optimizing each iteration with breath first greedy")
                 print(f"- using {self.choices.m} main \
-                    {'branch' if self.choices.m == 1 else 'branches'}")
+{'branch' if self.choices.m == 1 else 'branches'}")
             elif self.choices.dijkstra:
                 print("- optimizing each iteration with dijkstra")
 

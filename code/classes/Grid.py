@@ -79,6 +79,7 @@ class Grid:
             for row in reader:
                 position: Tuple[int, int] = \
                           tuple(map(int, row['positie'].split(",")))
+
                 capacity: float = float(row['capaciteit'])
                 battery: Battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)

@@ -8,7 +8,7 @@ from code.classes.Node import Node
 
 def reset_node_grid(node_grid):
     """
-    Sets all the nodes at distance \infty
+    Sets all the nodes at distance infty
     """
     for row in node_grid:
         for node in row:
@@ -27,12 +27,12 @@ def dijkstra_from_battery(grid: Grid) -> None:
 
         # Make a node grid
 
-        node_grid = [[Node(None, None, (x, y), inf) for x in range(51)] for y in range(51)]
+        node_grid = [[Node(None, None, (x, y), inf)
+                      for x in range(51)] for y in range(51)]
         targets = []
 
         x, y = battery.position
         battery_node = node_grid[y][x]
-
 
         # Start from battery
         seen = [battery_node]
@@ -52,7 +52,6 @@ def dijkstra_from_battery(grid: Grid) -> None:
             queue = seen.copy()
             heapq.heapify(queue)
 
-
             while node not in targets:
                 node = heapq.heappop(queue)
 
@@ -65,18 +64,21 @@ def dijkstra_from_battery(grid: Grid) -> None:
                         neighbour.value = node.value + 1
                         neighbour.parents = [node]
                         heapq.heappush(queue, neighbour)
+
                 if y > 0:
                     neighbour = node_grid[y-1][x]
                     if neighbour.value > node.value+1:
                         neighbour.value = node.value + 1
                         neighbour.parents = [node]
                         heapq.heappush(queue, neighbour)
+
                 if x < 50:
                     neighbour = node_grid[y][x+1]
                     if neighbour.value > node.value+1:
                         neighbour.value = node.value + 1
                         neighbour.parents = [node]
                         heapq.heappush(queue, neighbour)
+
                 if y < 50:
                     neighbour = node_grid[y+1][x]
                     if neighbour.value > node.value+1:

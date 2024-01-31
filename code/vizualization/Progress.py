@@ -2,6 +2,7 @@
 
 import sys
 import os
+from typing import List, Tuple
 
 
 class Progress:
@@ -73,18 +74,19 @@ class Progress:
         # Update the counter with the new value
         self.progression[counter] = (value, maxval)
 
-    def get_first_not_finished(self):
+    def get_lowest_not_finished(self):
         """
-        Finds the first counter that has not reached its maximum value.
+        Finds the lowest counter that has not reached its maximum value.
 
         Returns:
-            int: The ID of the first counter that is not finished,
-                 or None if all are finished.
+            int: The ID of the counter that is the lowest.
         """
+        tmp: List[Tuple[float, int]] = []
         for counter in range(self.counters):
             val, maxval = self.progression[counter]
-            if val != maxval:
-                return counter
+            tmp.append((val/maxval, counter))
+        tmp.sort()
+        return tmp[0][1]
 
     def finished(self):
         """
@@ -115,7 +117,7 @@ class Progress:
         Returns:
             bool: True if the counters were printed, False otherwise.
         """
-        if progress_id != self.get_first_not_finished() and \
+        if progress_id != self.get_lowest_not_finished() and \
            not self.finished():
             return False
 
