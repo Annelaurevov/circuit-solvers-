@@ -202,7 +202,7 @@ def run_configurations(combination: List[List[House]], grid: Grid, battery: Batt
 
         progress = progress_bar.progression[progress_id][0]
         progress_bar.update_counters(progress_id, progress+1)
-        progress_bar.print_counters()
+        progress_bar.print_counters(progress_id)
 
     return local_heap
 
@@ -285,7 +285,6 @@ def breath_first_greedy_fast(grid: Grid, max_branches: int, progress_bar: Progre
             heapq.heapify(config_heap)
 
             smallest = config_heap[0]
-            # print_progress(battery, smallest)
             give_best_config(config_heap, battery)
             keep_unique_paths(battery)
 

@@ -33,6 +33,15 @@ class Progress:
             if val != maxval:
                 return counter
 
+    
+
+    def finished(self):
+        for counter in range(self.counters):
+                val, maxval = self.progression[counter]
+                if val != maxval:
+                    return False
+        return True
+
 
     def print_counters(self, progress_id):
         """
@@ -41,14 +50,14 @@ class Progress:
         """
         # print(self.get_first_not_finished(), progress_id)
 
-        if progress_id != self.get_first_not_finished():
+        if progress_id != self.get_first_not_finished() and not self.finished():
+
             return False
 
         bars = round(os.get_terminal_size()[0]*2/3)
         bars -= 9
         bars -= len(str(self.counters))
         message = ""
-        finished = True
         for counter in range(self.counters):
             val, maxval = self.progression[counter]
             assert isinstance(val, int) and isinstance(maxval, int)
@@ -57,11 +66,10 @@ class Progress:
             # print(devision)
             assert isinstance(val, int) and isinstance(maxval, int) and isinstance(devision, int)
             message += f"Core {counter:{len(str(self.counters))}}: [{'▇'*devision}{'░'*(bars - devision)}] {val}/{maxval}\n"
-            if val != maxval:
-                finished = False
 
 
-        if finished:
+
+        if self.finished():
             self.last_printed = time.time()
             sys.stdout.write(message)
             sys.stdout.flush()
