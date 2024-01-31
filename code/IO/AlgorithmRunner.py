@@ -139,7 +139,7 @@ class AlgorithmRunner:
                 print("- visualizing result")
 
             if len(self.choices.output) != 0:
-                print("- saving output as: '" + self.choices.output + "'")
+                print("- saving best output as: '" + self.choices.output + "'")
 
             print("")
             return
