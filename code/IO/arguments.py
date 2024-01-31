@@ -15,6 +15,7 @@ class Choices:
         self.output = ""
         self.csv = False
         self.help = False
+        self.previous = False
 
         self.help_message = """
         Usage: python [option] [district]

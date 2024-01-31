@@ -1,7 +1,7 @@
 from itertools import combinations
 from random import sample
 from code.classes.Battery import Battery
-from code.algoritmen.dijkstra2 import dijkstra_from_battery
+from code.algoritmen.dijkstra import dijkstra_from_battery
 
 
 
