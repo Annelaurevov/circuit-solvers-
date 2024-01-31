@@ -288,6 +288,7 @@ class AlgorithmRunner:
 
         # Use multiprocessing to parallelize the loop
         with multiprocessing.Manager() as manager:
+
             lowest = manager.Value('d', float('inf'))
             grid_costs = []
             self.progress_bar.progression = manager.dict()
