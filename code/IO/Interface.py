@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import messagebox
 from code.IO.arguments import arguments
+from typing import Optional
+
 
 class Interface:
     """
@@ -11,13 +12,37 @@ class Interface:
 
     Methods:
     - on_algorithm_change(*args): Callback for algorithm change event.
-    - on_file_change(*args): Callback for 'Use previous run file' checkbox change event.
-    - on_breath_change(*args): Callback for 'Breath-first' checkbox change event.
-    - on_dijkstra_change(*args): Callback for 'Dijkstra' checkbox change event.
+    - on_file_change(*args): Callback for 'Use previous run
+        file' checkbox change event.
+    - on_breath_change(*args): Callback for 'Breath-first' checkbox
+        change event.
+    - on_dijkstra_change(*args): Callback for 'Dijkstra'
+        checkbox change event.
     - on_button_click(): Callback for 'Apply' button click event.
-    - perform_animation_and_dismiss(): Placeholder function for animation logic.
-    - create_widgets(): Creates Tkinter widgets and arranges them in the window.
-    - run(): Enters the Tkinter main event loop to run the application.
+    - perform_animation_and_dismiss(): Placeholder function for
+        animation logic.
+    - create_widgets(): Creates Tkinter widgets and
+        arranges them in the window.
+    - run() -> Optional[Arguments]: Enters the Tkinter main event loop
+        to run the application.
+
+    Attributes:
+    - root (tk.Tk): Tkinter window.
+    - out (list): List containing command-line arguments.
+    - algorithm (tk.StringVar): Tkinter variable for the selected algorithm.
+    - filename (tk.StringVar): Tkinter variable for the input filename.
+    - n (tk.StringVar): Tkinter variable for the number of iterations.
+    - switches (tk.BooleanVar): Tkinter variable for switches option.
+    - breath (tk.BooleanVar): Tkinter variable for breath-first option.
+    - m (tk.StringVar): Tkinter variable for the number of main branches.
+    - dijkstra (tk.BooleanVar): Tkinter variable for Dijkstra option.
+    - hist (tk.BooleanVar): Tkinter variable for histogram option.
+    - csv (tk.BooleanVar): Tkinter variable for CSV option.
+    - visualize (tk.BooleanVar): Tkinter variable for visualization option.
+    - output (tk.StringVar): Tkinter variable for the output filename.
+    - district (tk.StringVar): Tkinter variable for the selected district.
+    - previous (tk.BooleanVar): Tkinter variable for the
+        'Use previous run file' option.
     """
 
     def __init__(self):
@@ -46,7 +71,7 @@ class Interface:
 
         self.create_widgets()
 
-    def reset_variables(self):
+    def reset_variables(self) -> None:
         """
         Resets the variables to their initial values.
         """
@@ -63,25 +88,30 @@ class Interface:
         self.district.set("1")
         self.previous.set(True)
 
-    def validate_numeric_input(self, action, value_if_allowed, current_value, new_input, validation_type, trigger_type, widget_name):
+    def validate_numeric_input(self, action: str, value_if_allowed: str,
+                               current_value: str, new_input: str,
+                               validation_type: str, trigger_type: str,
+                               widget_name: str) -> bool:
         """
-        Validation function to allow only numeric input (excluding leading 0) or an empty string.
+        Validation function to allow only numeric input
+            (excluding leading 0) or an empty string.
         """
-        if action == '1':  # insert
-            if new_input.isdigit() or (new_input == "" and current_value != ""):
-                # Allow only numeric input or an empty string, excluding leading 0
+        if action == '1':
+            if new_input.isdigit() or (new_input == ""
+                                       and current_value != ""):
+                # Allow only numeric input or an empty string,
+                # excluding leading 0
                 return not (new_input == "0" and current_value == "")
             else:
                 return False
         else:
             return True
 
-
-
-    def on_algorithm_change(self, *args):
+    def on_algorithm_change(self, *args) -> None:
         """
         Callback for the algorithm change event.
-        Adjusts the visibility of certain widgets based on the selected algorithm.
+        Adjusts the visibility of certain widgets based on
+            the selected algorithm.
         """
         # Reset variables when the algorithm changes
         self.reset_variables()
@@ -98,49 +128,59 @@ class Interface:
 
         if current_algorithm == "random":
             self.iterations_label.grid(row=1, column=0, sticky="e", pady=5)
-            self.iterations_entry.grid(row=1, column=1, columnspan=2, sticky="w", pady=5)
+            self.iterations_entry.grid(row=1, column=1,
+                                       columnspan=2, sticky="w", pady=5)
             self.hist_checkbox.grid(row=7, column=1, sticky="w", pady=5)
             self.csv_checkbox.grid(row=7, column=2, sticky="w", pady=5)
 
         elif current_algorithm == "file":
-            self.previous_file_checkbox.grid(row=1, column=1, sticky="w", pady=5)
+            self.previous_file_checkbox.grid(row=1, column=1,
+                                             sticky="w", pady=5)
 
     def on_file_change(self, *args):
         """
         Callback for the 'Use previous run file' checkbox change event.
-        Adjusts the visibility of the filename-related widgets based on the checkbox state.
+        Adjusts the visibility of the filename-related
+            widgets based on the checkbox state.
         """
         if not self.previous.get():
             self.filename_label.grid(row=2, column=0, sticky="e", pady=5)
-            self.filename_entry.grid(row=2, column=1, columnspan=2, sticky="w", pady=5)
+            self.filename_entry.grid(row=2, column=1,
+                                     columnspan=2, sticky="w", pady=5)
         else:
             self.filename_label.grid_remove()
             self.filename_entry.grid_remove()
 
-    def on_breath_change(self, *args):
+    def on_breath_change(self, *args) -> None:
         """
         Callback for the 'Breath-first' checkbox change event.
-        Adjusts the visibility of the 'Main Branches' widgets based on the checkbox state.
+        Adjusts the visibility of the 'Main Branches' widgets
+            based on the checkbox state.
         """
         if self.breath.get():
             self.dijkstra.set(False)
             self.main_branches_label.grid(row=6, column=0, sticky="e", pady=5)
-            self.main_branches_menu.grid(row=6, column=1, columnspan=2, sticky="w", pady=5)
+            self.main_branches_menu.grid(row=6,
+                                         column=1,
+                                         columnspan=2,
+                                         sticky="w",
+                                         pady=5)
         else:
             self.main_branches_label.grid_remove()
             self.main_branches_menu.grid_remove()
 
-    def on_dijkstra_change(self, *args):
+    def on_dijkstra_change(self, *args) -> None:
         """
         Callback for the 'Dijkstra' checkbox change event.
-        Adjusts the visibility of the 'Main Branches' widgets based on the checkbox state.
+        Adjusts the visibility of the 'Main Branches'
+            widgets based on the checkbox state.
         """
         if self.dijkstra.get():
             self.main_branches_label.grid_remove()
             self.main_branches_menu.grid_remove()
             self.breath.set(False)
 
-    def on_button_click(self):
+    def on_button_click(self) -> None:
         """
         Callback for the 'Apply' button click event.
         """
@@ -161,14 +201,12 @@ class Interface:
             if self.filename.get():
                 out.append("-f")
                 out.append(self.filename.get())
-        
+
         if self.switches.get():
             out.append("-s")
 
-
         if self.dijkstra.get():
             out.append("-d")
-
 
         elif self.breath.get():
             out.append("-b")
@@ -189,61 +227,109 @@ class Interface:
             out.append(self.output.get())
 
         out.append(self.district.get())
-
-
         self.out = out
-        
 
-    def create_widgets(self):
+    def create_widgets(self) -> None:
         """
         Creates Tkinter widgets and arranges them in the window.
         """
-        self.algorithm_label: tk.Label = tk.Label(self.root, text="Start algorithm:")
+        self.algorithm_label: tk.Label = tk.Label(self.root,
+                                                  text="Start algorithm:")
         self.algorithm_options: list[str] = ["random", "greedy", "file"]
-        self.algorithm_entry: tk.OptionMenu = tk.OptionMenu(self.root, self.algorithm, *self.algorithm_options,
-                                                            command=self.on_algorithm_change)
+        self.algorithm_entry: tk.OptionMenu = \
+            tk.OptionMenu(self.root,
+                          self.algorithm,
+                          *self.algorithm_options,
+                          command=self.on_algorithm_change)
 
-        self.iterations_label: tk.Label = tk.Label(self.root, text="Iterations:")
-        self.iterations_entry: tk.Entry = tk.Entry(self.root, textvariable=self.n)
+        self.iterations_label: tk.Label = \
+            tk.Label(self.root, text="Iterations:")
+        self.iterations_entry: tk.Entry = \
+            tk.Entry(self.root, textvariable=self.n)
 
-        self.previous_file_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Use previous run file",
-                                                                      variable=self.previous, command=self.on_file_change)
+        self.previous_file_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root,
+                           text="Use previous run file",
+                           variable=self.previous,
+                           command=self.on_file_change)
 
-        self.filename_label: tk.Label = tk.Label(self.root, text="Input filename:")
-        self.filename_entry: tk.Entry = tk.Entry(self.root, textvariable=self.filename)
+        self.filename_label: tk.Label = \
+            tk.Label(self.root, text="Input filename:")
+        self.filename_entry: tk.Entry = \
+            tk.Entry(self.root, textvariable=self.filename)
 
-        self.switches_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Switches", variable=self.switches)
-        self.breath_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Breath-first greedy", variable=self.breath,
-                                                              command=self.on_breath_change)
+        self.switches_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root, text="Switches",
+                           variable=self.switches)
+        self.breath_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root, text="Breath-first greedy",
+                           variable=self.breath, command=self.on_breath_change)
 
-        self.main_branches_label: tk.Label = tk.Label(self.root, text="Main Branches:")
+        self.main_branches_label: tk.Label = tk.Label(
+                                                      self.root,
+                                                      text="Main Branches:"
+                                                      )
         self.main_branches_options: list[str] = ["1", "2", "3", "4", "5"]
-        self.main_branches_menu: tk.OptionMenu = tk.OptionMenu(self.root, self.m, *self.main_branches_options)
+        self.main_branches_menu: tk.OptionMenu = \
+            tk.OptionMenu(
+                          self.root,
+                          self.m,
+                          *self.main_branches_options
+                          )
 
-        self.dijkstra_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Dijkstra", variable=self.dijkstra,
-                                                                command=self.on_dijkstra_change)
+        self.dijkstra_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root, text="Dijkstra",
+                           variable=self.dijkstra,
+                           command=self.on_dijkstra_change
+                           )
 
-        self.output_label: tk.Label = tk.Label(self.root, text="Save output as:")
-        self.output_entry: tk.Entry = tk.Entry(self.root, textvariable=self.output)
+        self.output_label: tk.Label = \
+            tk.Label(self.root, text="Save output as:")
+        self.output_entry: tk.Entry = \
+            tk.Entry(self.root, textvariable=self.output)
 
-        self.visualize_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Visualize grid result",
-                                                                 variable=self.visualize)
-        self.hist_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="Show histogram", variable=self.hist)
-        self.csv_checkbox: tk.Checkbutton = tk.Checkbutton(self.root, text="CSV", variable=self.csv)
+        self.visualize_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root, text="Visualize grid result",
+                           variable=self.visualize
+                           )
+
+        self.hist_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root,
+                           text="Show histogram", variable=self.hist
+                           )
+
+        self.csv_checkbox: tk.Checkbutton = \
+            tk.Checkbutton(self.root, text="CSV",
+                           variable=self.csv
+                           )
 
         # GUI PLACEMENT
         self.district_label: tk.Label = tk.Label(self.root, text="District:")
         self.district_var_options: list[str] = ["1", "2", "3"]
-        self.district_var_menu: tk.OptionMenu = tk.OptionMenu(self.root, self.district, *self.district_var_options)
+        self.district_var_menu: tk.OptionMenu = \
+            tk.OptionMenu(self.root, self.district, *self.district_var_options)
 
-        self.apply_button: tk.Button = tk.Button(self.root, text="Apply", command=self.on_button_click)
+        self.apply_button: tk.Button = \
+            tk.Button(self.root, text="Apply", command=self.on_button_click)
 
         self.algorithm_label.grid(row=0, column=0, sticky="e", pady=5)
-        self.algorithm_entry.grid(row=0, column=1, columnspan=2, sticky="w", pady=5)
+        self.algorithm_entry.grid(row=0, column=1, columnspan=2,
+                                  sticky="w", pady=5
+                                  )
 
-        self.iterations_label.grid(row=1, column=0, sticky="e", pady=5)
-        self.iterations_entry.grid(row=1, column=1, columnspan=2, sticky="w", pady=5)
-        self.iterations_entry.config(validate="key", validatecommand=(self.root.register(self.validate_numeric_input), '%d', '%P', '%s', '%S', '%v', '%V', '%W'))
+        self.iterations_label.grid(row=1, column=0,
+                                   sticky="e", pady=5
+                                   )
+        self.iterations_entry.grid(row=1, column=1,
+                                   columnspan=2, sticky="w", pady=5
+                                   )
+        self.iterations_entry.config(
+            validate="key", validatecommand=(
+                self.root.register(self.validate_numeric_input),
+                '%d', '%P', '%s', '%S', '%v', '%V', '%W'
+            )
+        )
+
         self.hist_checkbox.grid(row=7, column=1, sticky="w", pady=5)
         self.csv_checkbox.grid(row=7, column=2, sticky="w", pady=5)
 
@@ -254,14 +340,16 @@ class Interface:
         self.visualize_checkbox.grid(row=8, column=1, sticky="w", pady=5)
 
         self.district_label.grid(row=0, column=1, sticky="e", pady=5)
-        self.district_var_menu.grid(row=0, column=2, columnspan=2, sticky="w", pady=5)
+        self.district_var_menu.grid(row=0, column=2, columnspan=2,
+                                    sticky="w", pady=5)
 
         self.output_label.grid(row=10, column=0, sticky="e", pady=5)
-        self.output_entry.grid(row=10, column=1, columnspan=2, sticky="w", pady=5)
+        self.output_entry.grid(row=10, column=1, columnspan=2,
+                               sticky="w", pady=5)
 
         self.apply_button.grid(row=11, column=1, columnspan=2, pady=10)
 
-    def run(self):
+    def run(self) -> Optional[arguments]:
         """
         Enters the Tkinter main event loop to run the application.
         """

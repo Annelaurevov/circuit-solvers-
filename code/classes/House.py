@@ -5,6 +5,7 @@ from typing import Tuple, List, TYPE_CHECKING
 if TYPE_CHECKING:
     from code.classes.Battery import Battery
 
+
 class House:
     """
     Represents a house in the smart grid.
@@ -16,7 +17,8 @@ class House:
     - make_path(position): Makes a path to a certain position
     - get_path_length(): Returns the length of the path
     """
-    def __init__(self, position: Tuple[int, int], capacity: float, house_id: int):
+    def __init__(self, position: Tuple[int, int],
+                 capacity: float, house_id: int):
         """
         Initialize a House object.
 
@@ -30,7 +32,6 @@ class House:
         self.path: List[Tuple[int, int]] = [position]
         self.battery: (Battery | None) = None
         self.id: int = house_id
-
 
     def get_path_length(self) -> int:
         """

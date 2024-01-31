@@ -6,7 +6,6 @@ from code.classes.Grid import Grid
 from code.classes.Node import Node
 
 
-
 def reset_node_grid(node_grid):
     """
     Sets all the nodes at distance \infty

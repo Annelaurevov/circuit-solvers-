@@ -1,27 +1,22 @@
-import sys
 import csv
-from typing import List
+from typing import List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
 from code.classes.Grid import Grid
-from code.classes.House import House
-from code.classes.Battery import Battery
 from code.IO.arguments import Choices
 
 from code.algoritmen.greedy import fill_grid_greedy
 from code.algoritmen.switch_pairs import switch_pairs
 from code.algoritmen.random import random_connect
-from code.algoritmen.breath_first_greedy import breath_first_greedy_slow, breath_first_greedy_fast
+from code.algoritmen.breath_first_greedy import \
+     breath_first_greedy_slow, breath_first_greedy_fast
 from code.algoritmen.dijkstra import dijkstra_from_battery
 
-from code.data_analyse.data_analysis import get_average, get_deviation, get_high, get_low
-from code.IO.arguments import arguments
 from code.vizualization.visualize import visualize
 from code.vizualization.Progress import Progress
 
 import multiprocessing
-from functools import partial
 
 
 class AlgorithmRunner:
@@ -33,34 +28,37 @@ class AlgorithmRunner:
     - Call run() to execute the algorithm based on the user's choices.
 
     Methods:
-    - print_progress(n, max_n) -> None: Prints a progress bar for iterations during the random algorithm.
+    - print_progress(n, max_n) -> None: Prints a progress bar for
+      iterations during the random algorithm.
     - plot_histogram(grid_costs) -> None: Plots a histogram of grid costs.
-    - print_algorithm_text() -> None: Prints text related to a specific algorithm type.
+    - print_algorithm_text() -> None: Prints text related to a
+      specific algorithm type.
     - print_final_costs(costs) -> None: Prints final costs.
     - load_structures() -> None: Loads houses and batteries into the grid.
-    - breath_or_dijkstra() -> None: Applies either breath-first greedy or Dijkstra's algorithm based on choices.
-    - get_selected_options() -> str: Get the selected options for inclusion in the CSV header.
-    - write_results_to_csv(data: List[List[float]]) -> None: Writes results to a CSV file.
+    - breath_or_dijkstra() -> None: Applies either breath-first greedy or
+      Dijkstra's algorithm based on choices.
+    - get_selected_options() -> str: Get the selected options for
+      inclusion in the CSV header.
+    - write_results_to_csv(data: List[List[float]]) -> None: Writes results
+      to a CSV file.
     - start_random() -> None: Starts the random algorithm.
     - start_greedy() -> None: Starts the greedy algorithm.
     - start_with_input() -> None: Starts with existing output as input.
     - run() -> None: Final run function.
     """
 
-    def __init__(self, grid: Grid, choices: Choices, district: int):
+    def __init__(self, grid: Grid, choices: Choices):
         """
         Initializes the AlgorithmRunner object.
 
         Args:
         - grid (Grid): The smart grid.
         - choices (Choices): User choices for algorithm options.
-        - district (int): The district number.
         """
         self.progress_bar = Progress()
         self.grid = grid
         self.choices = choices
-        self.district = district
-
+        self.district = grid.district
 
     def plot_histogram(self, grid_costs: List[float]) -> None:
         """
@@ -72,7 +70,7 @@ class AlgorithmRunner:
         plt.title(
             f"District: {self.district}\n"
             f"n = {self.choices.n}\n"
-            f"Average = {round(np.mean(grid_costs), 2)} "
+            f"Average = {round(np.mean(grid_costs), 2)}"
             f"$\sigma$ = {round(np.std(grid_costs), 2)}"
         )
 
@@ -82,14 +80,21 @@ class AlgorithmRunner:
         sigma = np.std(grid_costs)
         mu = np.mean(grid_costs)
         x = np.linspace(min(grid_costs), max(grid_costs), 1000)
-        y = 1 / (2 * np.pi * sigma ** 2) ** 0.5 * np.exp(-1 / 2 * (x - mu) ** 2 / sigma ** 2)
+        y = 1 / (2 * np.pi * sigma ** 2) ** 0.5 * \
+            np.exp(-1 / 2 * (x - mu) ** 2 / sigma ** 2)
 
-        print(min(grid_costs), max(grid_costs))
-        print(f"{mu=}, {sigma=}")
+        min_value = min(grid_costs)[0] if isinstance(min(grid_costs),
+                        list) else min(grid_costs)
+        max_value = max(grid_costs)[0] if isinstance(max(grid_costs),
+            list) else max(grid_costs)
+
+        print("\nminimum =", min_value)
+        print("maximum =", max_value)
+        print(f"{mu = }")
+        print(f"{sigma = }")
 
         plt.plot(x, y)
         plt.show()
-
 
     def print_algorithm_text(self) -> None:
         """
@@ -99,11 +104,13 @@ class AlgorithmRunner:
         if self.choices.algorithm not in ["greedy", "random"]:
             print("\n- filling grid with existing output")
             if self.choices.filename:
-                print("- using file: '" + self.choices.filename.lstrip("-") + "'")
+                print("- using file: '" + \
+                    self.choices.filename.lstrip("-") + "'")
             else:
                 print("- using previous run output")
         else:
-            print(f"\n- filling grid with " + self.choices.algorithm + " algorithm")
+            print(f"\n- filling grid with " + self.choices.algorithm + \
+                " algorithm")
 
         # Print specific text for random with iterations
         if self.choices.n != 1 and self.choices.algorithm == "random":
@@ -154,7 +161,6 @@ class AlgorithmRunner:
 
         print("")
 
-
     def print_final_costs(self, costs: float) -> None:
         """
         Prints final costs.
@@ -169,14 +175,12 @@ class AlgorithmRunner:
         print("-" * len(text))
         print()
 
-
     def load_structures(self) -> None:
         """
         Loads houses and batteries into the grid.
         """
         self.grid.load_houses(f"data/district_{self.district}/district-{self.district}_houses.csv")
         self.grid.load_batteries(f"data/district_{self.district}/district-{self.district}_batteries.csv")
-
 
     def breath_or_dijkstra(self) -> None:
         """
@@ -189,7 +193,6 @@ class AlgorithmRunner:
             breath_first_greedy_fast(self.grid, self.choices.m, progress_bar)
         elif self.choices.dijkstra:
             dijkstra_from_battery(self.grid)
-
 
     def get_selected_options(self) -> str:
         """
@@ -216,7 +219,6 @@ class AlgorithmRunner:
 
         return "".join(selected_options)
 
-
     def write_results_to_csv(self, data: List[List[float]]) -> None:
         """
         Writes results to a CSV file.
@@ -233,9 +235,21 @@ class AlgorithmRunner:
             for row in data:
                 writer.writerow(row)
 
+    def start_random_iterations(self, amount: int, grid_costs: List[float],
+                                shared_lowest: multiprocessing.Value,
+                                progress_id: int) -> Tuple[Grid, List[float]]:
+        """
+        Run random iterations and return the minimum grid and grid costs.
 
+        Parameters:
+        - amount (int): The number of random iterations to perform.
+        - grid_costs (List[float]): A list to store the costs of each iteration.
+        - shared_lowest (multiprocessing.Value): Shared value to track the lowest cost across processes.
+        - progress_id (int): Identifier for the progress bar.
 
-    def start_random_iterations(self, amount, grid_costs, shared_lowest, progress_id):
+        Returns:
+        Tuple[Grid, List[float]]: The minimum grid configuration and the list of grid costs.
+        """
         grid = self.grid.copy()
         local_lowest = float('inf')
         progress_bar = self.progress_bar
@@ -244,16 +258,12 @@ class AlgorithmRunner:
             progress_bar.update_counters(progress_id, i+1)
             progress_bar.print_counters(progress_id)
                 
-            # print(self.progress_bar.counters)
             while not random_connect(grid):
                 grid.reset()
 
             if self.choices.switches:
                 while switch_pairs(self.grid):
                     pass
-
-
-
 
             if self.choices.breath:
                 breath_first_greedy_slow(grid, self.choices.m)
@@ -274,8 +284,6 @@ class AlgorithmRunner:
 
 
         return minimum_grid, grid_costs
-
-
 
     def start_random(self) -> None:
         """
@@ -332,15 +340,14 @@ class AlgorithmRunner:
             pool.join()
 
             if self.choices.csv:
-                self.write_results_to_csv(list(grid_costs))  # Convert to a regular list before writing to CSV
+                self.write_results_to_csv(list(grid_costs))
 
             if self.choices.hist:
-                self.plot_histogram(list(grid_costs))  # Convert to a regular list before plotting
+                self.plot_histogram(list(grid_costs))
 
             self.print_final_costs(lowest.value)
 
         assert self.grid.is_filled()
-
 
     def start_greedy(self) -> None:
         """
@@ -359,7 +366,6 @@ class AlgorithmRunner:
         self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
         self.print_final_costs(self.grid.calc_costs())
 
-
     def start_with_input(self) -> None:
         """
         Starts with existing output as input.
@@ -376,9 +382,7 @@ class AlgorithmRunner:
         self.breath_or_dijkstra()
 
         self.grid.write_out(f"data/outputs/json/output_district-{self.district}.json")
-
         self.print_final_costs(self.grid.calc_costs())
-
 
     def run(self) -> None:
         """

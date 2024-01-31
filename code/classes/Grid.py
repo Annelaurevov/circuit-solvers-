@@ -8,6 +8,7 @@ from copy import deepcopy
 import csv
 import json
 
+
 class Grid:
     """
     Represents a smart grid.
@@ -19,9 +20,12 @@ class Grid:
     - Calculate costs using calc_costs()
 
     Methods:
-    - load_houses(file_path: str) -> None: Load houses into class objects on grid.
-    - load_batteries(file_path: str) -> None: Load batteries into battery objects on grid.
-    - reset() -> None: Resets the grid by deleting paths, but keeping houses and batteries.
+    - load_houses(file_path: str) -> None: Load houses into class
+      objects on grid.
+    - load_batteries(file_path: str) -> None: Load batteries
+      into battery objects on grid.
+    - reset() -> None: Resets the grid by deleting paths,
+      but keeping houses and batteries.
     - is_filled() -> bool: Checks if all houses are connected to batteries.
     - calc_costs() -> int: Calculates the total costs.
     - write_out(path: str) -> None: Writes the grid data to a JSON file.
@@ -40,7 +44,6 @@ class Grid:
         self.cable_costs: int = 9
         self.battery_costs: int = 5000
         self.district: int = district
-
 
     def load_houses(self, file_path: str) -> None:
         """
@@ -63,7 +66,6 @@ class Grid:
 
                 house_id += 1
 
-
     def load_batteries(self, file_path: str) -> None:
         """
         Load batteries into battery objects.
@@ -75,20 +77,18 @@ class Grid:
         with open(file_path, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             for row in reader:
-                position: Tuple[int, int] = tuple(map(int, row['positie'].split(",")))
+                position: Tuple[int, int] = \
+                          tuple(map(int, row['positie'].split(",")))
                 capacity: float = float(row['capaciteit'])
                 battery: Battery = Battery(position, capacity, battery_id)
                 self.batteries.append(battery)
                 battery_id += 1
-
 
     def copy(self):
         """
         Returns a copy of itself
         """
         return deepcopy(self)
-
-
 
     def reset(self) -> None:
         """
@@ -102,7 +102,6 @@ class Grid:
             house.path = [house.position]
             house.battery = None
 
-
     def is_filled(self) -> bool:
         """
         Checks if all houses are connected to batteries.
@@ -114,7 +113,6 @@ class Grid:
             if house.battery is None:
                 return False
         return True
-
 
     def calc_costs(self) -> int:
         """
@@ -132,7 +130,6 @@ class Grid:
             total_costs += self.cable_costs * (len(house.path) - 1)
 
         return total_costs
-
 
     def write_out(self, path: str) -> None:
         """
@@ -152,13 +149,15 @@ class Grid:
 
             for battery in self.batteries:
                 battery_data: dict = dict()
-                battery_data["location"] = f"{battery.position[0]},{battery.position[1]}"
+                battery_data["location"] = \
+                    f"{battery.position[0]},{battery.position[1]}"
                 battery_data["capacity"] = battery.full
 
                 houses: List[dict] = []
                 for house in battery.houses:
                     house_data: dict = dict()
-                    house_data["location"] = f"{house.position[0]},{house.position[1]}"
+                    house_data["location"] = \
+                        f"{house.position[0]},{house.position[1]}"
                     house_data["output"] = house.capacity
                     house_data["cables"] = [f"{x},{y}" for x, y in house.path]
                     houses.append(house_data)
@@ -166,7 +165,6 @@ class Grid:
                 data.append(battery_data)
 
             json.dump(data, f, indent=4)
-
 
     def read_in(self, path: str) -> None:
         """

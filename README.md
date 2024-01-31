@@ -59,6 +59,9 @@ Hiermee wordt een interface gegeven en kan de gewenste combinatie gekozen worden
 ```
 Usage: python [option] [district]
 
+                    No options and district will show a GUI, prompting the user to select
+                    algorithms.
+
         -g          Selects the greedy algorithm to fill grid
         -r          Selects the random algorithm to fill grid
         -i          Selects existing file output as input to fill grid, default: most recent
@@ -73,8 +76,8 @@ Usage: python [option] [district]
 
         -o <name>   Give name for the output file 
         
+        -c          Saves csv file from random iterations in outputs/csv
         -v          Visualizes the result with pygame
-        -c          Writes out random result to csv file in outputs
         -p          Shows a histogram of random iterations [-r -n <amount>]
 
         -h          Shows this message

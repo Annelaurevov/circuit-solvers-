@@ -1,8 +1,8 @@
 # File containing Battery class
 
 from typing import Tuple, List
-from copy import deepcopy
 from code.classes.House import House
+
 
 class Battery:
     """
@@ -13,10 +13,11 @@ class Battery:
 
     Methods:
     - can_add(house) -> bool: Checks whether a house can be added.
-    - add(house) -> bool: Adds a house to the battery if there is enough capacity.
+    - add(house) -> bool: Adds a house to the battery if enough capacity.
     - remove(house) -> None: Removes a selected house from the battery.
     """
-    def __init__(self, position: Tuple[int, int], full_capacity: float, battery_id: int):
+    def __init__(self, position: Tuple[int, int],
+                 full_capacity: float, battery_id: int):
         """
         Initialize a Battery object.
 
@@ -32,7 +33,6 @@ class Battery:
         self.cost: int = 5000
         self.houses: List[House] = []
 
-
     def can_add(self, house: House) -> bool:
         """
         Checks whether a house can be added to the battery.
@@ -46,7 +46,6 @@ class Battery:
         if self.capacity >= house.capacity:
             return True
         return False
-
 
     def add(self, house: House) -> bool:
         """
@@ -64,7 +63,6 @@ class Battery:
             self.houses.append(house)
             return True
         return False
-
 
     def remove(self, house: House) -> None:
         """
@@ -84,7 +82,6 @@ class Battery:
                 self.houses.pop(i)
                 return
         raise IndexError
-
 
     def __repr__(self) -> str:
         """
