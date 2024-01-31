@@ -1,3 +1,5 @@
+# File containing Inteface class that holds the code for the GUI
+
 import tkinter as tk
 from code.IO.arguments import arguments
 from typing import Optional

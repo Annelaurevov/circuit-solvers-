@@ -1,3 +1,5 @@
+# File containing function to parse the command line operations
+
 import sys
 from code.classes.Grid import Grid
 from code.IO.arguments import arguments, Choices

@@ -1,4 +1,5 @@
 # File containing the node class
+
 from typing_extensions import Self
 
 

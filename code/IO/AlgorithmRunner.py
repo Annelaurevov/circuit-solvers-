@@ -1,3 +1,5 @@
+# File containing class AlgorithmRunner that is used for handling running logic
+
 import csv
 from typing import List, Tuple
 import matplotlib.pyplot as plt
@@ -417,6 +419,6 @@ class AlgorithmRunner:
         if self.choices.visualize:
             visualize(self.choices.district)
 
-        if len(self.choices.output) != 0:
+        if self.choices.output:
             self.grid.write_out(f"data/outputs/json/output_district-"
                                 f"{self.district}-{self.choices.output}.json")

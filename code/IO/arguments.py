@@ -1,3 +1,5 @@
+# File containing class with Choices that are used for running main
+
 import sys
 
 MESSAGE = \
@@ -107,6 +109,7 @@ def arguments(args):
 
     if "-o" in args:
         choices.output = args[args.index("-o") + 1]
+        print(choices.output)
 
     if "-v" in args:
         choices.visualize = True

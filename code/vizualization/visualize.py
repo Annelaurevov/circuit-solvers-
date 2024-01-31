@@ -1,4 +1,5 @@
 # File containing Visualing function
+
 import json
 import sys
 from typing import List, Tuple
@@ -202,7 +203,7 @@ def visualize(district_number: int) -> None:
         - color: RGB tuple representing the color.
         - location: Tuple (x, y) specifying the position.
         """
-        house_location = tuple(map(int, [location[0] - 0.5,
+        house_location = tuple(map(float, [location[0] - 0.5,
                                          location[1] - 0.5]))
 
         house_underlay_rect = pygame.Rect(

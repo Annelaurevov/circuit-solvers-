@@ -1,4 +1,5 @@
 # File containing the visualization of the progress
+
 import sys
 import os
 
