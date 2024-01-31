@@ -69,5 +69,6 @@ def switch_pairs(grid: object) -> bool:
                 house1.path = path(house1.position, battery1.position)
                 house2.path = path(house2.position, battery2.position)
 
+    print(grid.calc_costs())
     return switched
 

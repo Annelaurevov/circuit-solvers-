@@ -32,7 +32,6 @@ class Progress:
             message += f"Core {counter:{len(str(self.counters))}}: [{'▇'*devision}{'░'*(bars - devision)}] {val}/{maxval}\n"
             if val != maxval:
                 finished = False
-        
 
 
         if finished:

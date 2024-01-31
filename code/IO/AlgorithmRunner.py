@@ -62,25 +62,6 @@ class AlgorithmRunner:
         self.district = district
 
 
-    def print_progress(self, n: int, max_n: int) -> None:
-        """
-        Prints a progress bar for iterations during the random algorithm.
-
-        Args:
-        - n (int): Current iteration.
-        - max_n (int): Maximum number of iterations.
-        """
-        characters = round(50 * n / max_n)
-        progress_bar = f"Progress: [{'#' * characters}{' ' * (50 - characters)}]"
-
-        if n == max_n - 1:
-            progress_bar = f"Progress: [{'#' * 50}]"
-            progress_bar += "\n"
-        
-        sys.stdout.write('\r' + progress_bar)
-        sys.stdout.flush()
-
-
     def plot_histogram(self, grid_costs: List[float]) -> None:
         """
         Plots a histogram of grid costs.
@@ -202,8 +183,10 @@ class AlgorithmRunner:
         Applies either breath-first greedy or Dijkstra's algorithm based on choices.
         Prints out desired text.
         """
+        progress_bar = Progress()
+
         if self.choices.breath:
-            breath_first_greedy_fast(self.grid, self.choices.m)
+            breath_first_greedy_fast(self.grid, self.choices.m, progress_bar)
         elif self.choices.dijkstra:
             dijkstra_from_battery(self.grid)
 
@@ -266,7 +249,7 @@ class AlgorithmRunner:
                 grid.reset()
 
             if self.choices.switches:
-                while switch_pairs(grid):
+                while switch_pairs(self.grid):
                     pass
 
             if self.choices.breath:
