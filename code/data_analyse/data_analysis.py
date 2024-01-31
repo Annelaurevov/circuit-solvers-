@@ -23,7 +23,7 @@ def get_deviation(data: List[Union[int, float]]) -> float:
     Returns:
         float: The standard deviation of the data.
     """
-    S2 = 0
+    S2 = 0.0
 
     avg = get_average(data)
     n = len(data)
