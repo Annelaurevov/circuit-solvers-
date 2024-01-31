@@ -1,4 +1,6 @@
 # File containing the node class
+from typing_extensions import Self
+
 class Node:
     """
     Node class to save points
@@ -12,7 +14,7 @@ class Node:
         self.value = value
 
 
-    def __lt__(self, __value: object) -> bool:
+    def __lt__(self, __value: Self) -> bool:
         """
         Uses the less then on the value
         """

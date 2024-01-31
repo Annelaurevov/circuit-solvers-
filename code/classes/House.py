@@ -1,6 +1,9 @@
 # File containing House class
 
-from typing import Tuple, List
+from typing import Tuple, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from code.classes.Battery import Battery
 
 class House:
     """
@@ -25,7 +28,7 @@ class House:
         self.position: Tuple[int, int] = position
         self.capacity: float = capacity
         self.path: List[Tuple[int, int]] = [position]
-        self.battery = None
+        self.battery: (Battery | None) = None
         self.id: int = house_id
 
 

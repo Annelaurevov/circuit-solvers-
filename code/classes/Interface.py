@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from starting.arguments import arguments
+from code.IO.arguments import arguments
 
 class Interface:
     """
@@ -145,7 +145,7 @@ class Interface:
         Callback for the 'Apply' button click event.
         """
         # Schedule the animation and window dismissal after 2 seconds
-        self.root.after(500, self.root.destroy())
+        self.root.after(500, self.root.destroy)
 
         # Return a list containing the arguments used
         out = []
