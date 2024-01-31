@@ -1,4 +1,0 @@
-tk
-pygame
-typing
-
