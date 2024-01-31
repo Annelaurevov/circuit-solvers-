@@ -105,7 +105,7 @@ def visualize(district_number: int) -> None:
         Returns:
         float: The total output power associated with the selected battery.
         """
-        total_output = 0
+        total_output: float = 0
         
         for house_data in data[selected_battery]["houses"]:
             house_output = house_data.get("output", 0)  
@@ -193,7 +193,7 @@ def visualize(district_number: int) -> None:
         - color: RGB tuple representing the color.
         - location: Tuple (x, y) specifying the position.
         """
-        house_location = [location[0] - 0.5, location[1] - 0.5]
+        house_location = tuple(map(int, [location[0] - 0.5, location[1] - 0.5]))
 
         house_underlay_rect = pygame.Rect(get_on_screen_coordinates(*house_location), (box_width, box_height))
         pygame.draw.rect(screen, color, house_underlay_rect)
@@ -217,7 +217,7 @@ def visualize(district_number: int) -> None:
 
             pygame.draw.line(screen, color, get_on_screen_coordinates(*starting_point),
                             get_on_screen_coordinates(*end_point), width=2)
-
+            
             starting_point = end_point
     
     def draw_selected_location(screen: pygame.Surface, color: Tuple[int, int, int], position: Tuple[int, int]) -> None:
@@ -263,7 +263,8 @@ def visualize(district_number: int) -> None:
             if coordinates[i][0] - 26 < location[0] <= coordinates[i][0] and \
                 coordinates[i][1] - 26 < location[1] <= coordinates[i][1]:
                     return i+1
-                    
+        return -1 
+     
     def draw_all(screen: pygame.Surface) -> None:
         """
         Draw the entire smart grid on the screen.
@@ -279,7 +280,8 @@ def visualize(district_number: int) -> None:
         for location_data in data[1:]:
             color = colors[id]
             id += 1
-            draw_battery(screen, color, tuple(map(int, location_data['location'].split(','))))
+            location = tuple(map(int, location_data['location'].split(',')))
+            draw_battery(screen, color, location)
            
             for house_data in location_data["houses"]:
                 draw_house(screen, color, tuple(map(int, house_data['location'].split(','))))
