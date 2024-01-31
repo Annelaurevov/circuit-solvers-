@@ -39,6 +39,8 @@ class Progress:
         Prints the counters as progressbars
         optional set dt as time to update
         """
+        # print(self.get_first_not_finished(), progress_id)
+
         if progress_id != self.get_first_not_finished():
             return False
 
@@ -60,14 +62,13 @@ class Progress:
 
 
         if finished:
-            time.sleep(0.1)
             self.last_printed = time.time()
             sys.stdout.write(message)
             sys.stdout.flush()
             return True
-        if time.time() - self.last_printed > dt:
-            self.last_printed = time.time()
-            message += "\033[F" * (self.counters)
-            sys.stdout.write(message)
-            sys.stdout.flush()
+
+        self.last_printed = time.time()
+        message += "\033[F" * (self.counters)
+        sys.stdout.write(message)
+        sys.stdout.flush()
         return False
