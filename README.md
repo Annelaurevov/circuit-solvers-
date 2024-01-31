@@ -83,8 +83,6 @@ Usage: python [option] [district]
         -h          Shows this message
 ```
 
-Wanneer de pygame visualisatie is geopend, kan het programma worden afgesloten door pygame af te sluiten
-
 #### **Stap 1:** Kies één
 - **`'-g'`** of **`'-r' ('-n' <iterations>)`** of **`'-i' ('-f' <name>)`**
 
