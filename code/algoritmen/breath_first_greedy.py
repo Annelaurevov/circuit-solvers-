@@ -200,7 +200,8 @@ def run_configurations(combination: List[List[House]], grid: Grid, battery: Batt
         keep_unique_paths(battery)
         add_config_costs(main_houses, battery, grid, local_heap)
 
-        progress_bar.update_counters(progress_id, i+1)
+        progress = progress_bar.progression[progress_id][0]
+        progress_bar.update_counters(progress_id, progress+1)
         progress_bar.print_counters()
 
     return local_heap
@@ -226,22 +227,49 @@ def breath_first_greedy_fast(grid: Grid, max_branches: int, progress_bar: Progre
     # Create progress id's
     num_processes = multiprocessing.cpu_count()
     progress_ids = []
-    for _ in range(num_processes):
-        progress_id = progress_bar.add_counter(len(grid_combinations) // num_processes)
-        progress_ids.append(progress_id)
+    
+
+    with multiprocessing.Manager() as manager:
+        progress_bar.progression = manager.dict()
 
 
-    for battery in grid.batteries:
-        with multiprocessing.Manager() as manager:
+        for i in range(num_processes):
+
+            progress_id = progress_bar.add_counter(0)
+
+            progress_ids.append(progress_id)
+
+        all_partial_combinations_per_battery = {}
+
+        num_processes = multiprocessing.cpu_count()
+        for battery in grid.batteries:
+
             all_combinations = generate_combinations(battery.houses, max_branches)
+            quotient, remainder = divmod(len(all_combinations), num_processes)
+            chunk_size = quotient + (1 if remainder > 0 else 0)
+            all_partial_combinations = [all_combinations[i:i + chunk_size] for i in range(0, len(all_combinations), chunk_size)]
+
+            n = len(all_combinations)
+            for i in range(num_processes):
+                val, maxval = progress_bar.progression[i]
+                if n - chunk_size <= 0:
+                    maxval += n
+                else:
+                    maxval += chunk_size
+                n = max(0, n - chunk_size)
+
+                progress_bar.progression[i] = (val, maxval)
+
+
+            all_partial_combinations_per_battery[battery] = all_partial_combinations
+
+    
+        for battery in grid.batteries:
 
             num_processes = multiprocessing.cpu_count()
             pool = multiprocessing.Pool(processes=num_processes)
 
-            quotient, remainder = divmod(len(all_combinations), num_processes)
-            chunk_size = quotient + (1 if remainder > 0 else 0)
-
-            all_partial_combinations = [all_combinations[i:i + chunk_size] for i in range(0, len(all_combinations), chunk_size)]
+            all_partial_combinations = all_partial_combinations_per_battery[battery]
 
             inputs = []
             for i, combination in enumerate(all_partial_combinations):
