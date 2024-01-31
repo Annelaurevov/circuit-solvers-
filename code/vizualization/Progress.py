@@ -1,22 +1,36 @@
 import sys
+import time
 import os
 
 class Progress:
     def __init__(self):
+        self.last_printed = -10e10
         self.progression = {}
         self.counters = 0
 
     def add_counter(self, maxval):
+        """
+        Adds a counter to the class
+        Returns an id for the counter
+        """
         self.progression[self.counters] = (0, maxval)
         self.counters += 1
         return self.counters - 1
-    
+
     def update_counters(self, counter, value):
+        """
+        Updates the counters
+        Input: counter_id, value
+        """
         maxval = self.progression[counter][1]
         assert isinstance(maxval, int), "Update counters issue"
         self.progression[counter] = (value, maxval)
 
-    def print_counters(self):
+    def print_counters(self, dt = 0.1):
+        """
+        Prints the counters as progressbars
+        optional set dt as time to update
+        """
         bars = round(os.get_terminal_size()[0]*2/3)
         bars -= 9
         bars -= len(str(self.counters))
@@ -35,11 +49,14 @@ class Progress:
 
 
         if finished:
+            time.sleep(0.1)
+            self.last_printed = time.time()
             sys.stdout.write(message)
             sys.stdout.flush()
             return True
-        message += "\033[F" * (self.counters)
-        sys.stdout.write(message)
-        sys.stdout.flush()
-        # print(message, end='\r')
+        if time.time() - self.last_printed > dt:
+            self.last_printed = time.time()
+            message += "\033[F" * (self.counters)
+            sys.stdout.write(message)
+            sys.stdout.flush()
         return False
