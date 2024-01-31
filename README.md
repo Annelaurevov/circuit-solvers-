@@ -103,8 +103,6 @@ Usage: python [option] [district]
 - *Random Algorithm met 10 iterations en Histogram op district 1:* `python main.py '-r' '-n' 10 '-p' 1`
 - *Breath-First Greedy Algorithm op previous run file met 3 main branches en Visualization, met 'important' als output naam op district 2:* `python main.py '-i' '-b' '-m' 3 '-o' important '-v' 2`
 
-Wanneer de pygame visualisatie is geopend, kan het programma worden afgesloten door pygame af te sluiten
-
 ***
 
 ### Visualisatie
