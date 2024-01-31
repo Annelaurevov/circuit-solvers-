@@ -6,7 +6,7 @@ Groene energie, opgewekt door huishoudelijke installaties zoals zonnepanelen, cr
 
 ### Vereisten
 
-Deze codebase is volledig geschreven in Python 3.10. In requirements.txt staan alle benodigde packages om de code succesvol te draaien. Deze zijn gemakkelijk te installeren via pip dmv. de volgende instructie:
+Deze codebase is volledig geschreven in Python 3 en getest in 3.10. In requirements.txt staan alle benodigde packages om de code succesvol te draaien. Deze zijn gemakkelijk te installeren via pip dmv. de volgende instructie:
 
 ```
 pip install -r requirements.txt
@@ -83,6 +83,8 @@ Usage: python [option] [district]
         -h          Shows this message
 ```
 
+Wanneer de pygame visualisatie is geopend, kan het programma worden afgesloten door pygame af te sluiten
+
 #### **Stap 1:** Kies één
 - **`'-g'`** of **`'-r' ('-n' <iterations>)`** of **`'-i' ('-f' <name>)`**
 
@@ -108,7 +110,7 @@ Usage: python [option] [district]
 ### Visualisatie
 
 - Met de interactieve pygame visualisatie kan het smart grid worden gevisualiseerd
-- Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden weergenomen:
+- Met het bewegen van de cursor over een batterij, kunnen specifieke eigenschappen worden waargenomen:
 
 <div align="center">
     <img src="data/images/demonstration.gif" alt="Visualisation GIF" width="500"/>

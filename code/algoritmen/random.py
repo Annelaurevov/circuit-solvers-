@@ -1,7 +1,9 @@
-# File containing function with Algorithm that randomly connects houses and batteries
+# File containing function with Algorithm that randomly connects 
+    # houses and batteries
 
 from code.algoritmen.manhattan_path import manhattan_path as path
 import random
+
 
 def random_connect(grid: object) -> bool:
     """
@@ -16,7 +18,8 @@ def random_connect(grid: object) -> bool:
     houses = grid.houses.copy()
     while houses:
         house = houses.pop()
-        batteries = [battery for battery in grid.batteries if battery.can_add(house)]
+        batteries = [battery for battery in grid.batteries
+                     if battery.can_add(house)]
 
         if not batteries:
             return False

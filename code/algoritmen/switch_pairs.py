@@ -2,15 +2,18 @@
 
 from code.algoritmen.manhattan_path import manhattan_path as path
 
+
 def switch_pairs(grid: object) -> bool:
     """
-    Switch pairs of houses between batteries to optimize the grid configuration.
+    Switch pairs of houses between batteries to optimize
+        the grid configuration.
 
     Args:
     - grid (object): The grid object representing the smart grid configuration.
 
     Returns:
-    bool: True if a switch was successful and improved the configuration, False otherwise.
+    bool: True if a switch was successful and improved the
+        configuration, False otherwise.
     """
     switched = False
 
@@ -51,7 +54,8 @@ def switch_pairs(grid: object) -> bool:
                 house2.path = path(house2.position, battery1.position)
 
                 if grid.calc_costs() >= current_cost:
-                    # If switching does not improve the configuration, revert the switch
+                    # If switching does not improve the configuration,
+                    # revert the switch
                     battery1.remove(house2)
                     battery2.remove(house1)
 
@@ -70,4 +74,3 @@ def switch_pairs(grid: object) -> bool:
                 house2.path = path(house2.position, battery2.position)
 
     return switched
-

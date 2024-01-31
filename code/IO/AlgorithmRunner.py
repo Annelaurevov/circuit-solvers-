@@ -416,9 +416,8 @@ class AlgorithmRunner:
 
         assert self.grid.is_filled()
 
-        if self.choices.visualize:
-            visualize(self.choices.district)
-
         if self.choices.output:
             self.grid.write_out(f"data/outputs/json/output_district-"
                                 f"{self.district}-{self.choices.output}.json")
+        if self.choices.visualize:
+            visualize(self.choices.district)
