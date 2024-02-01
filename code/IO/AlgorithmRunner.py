@@ -276,7 +276,7 @@ switch pairs algorithm")
                 grid.reset()
 
             if self.choices.switches:
-                while switch_pairs(self.grid):
+                while switch_pairs(grid):
                     pass
 
             if self.choices.breath:
