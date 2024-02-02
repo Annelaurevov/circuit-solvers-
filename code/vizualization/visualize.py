@@ -150,7 +150,10 @@ def visualize(district_number: int) -> None:
         district = "District: " + str(data[0]["district"])
         # draw total total cost of grid
         total_costs_location = get_on_screen_coordinates(-1, -1)
-        total_costs = "Total costs: " + str(data[0]["costs-own"])
+        if "costs-own" in data[0]:
+            total_costs = "Total costs: " + str(data[0]["costs-own"])
+        else:
+            total_costs = "Total costs: " + str(data[0]["shared-costs"])
 
         draw_text(screen, district, BLACK, district_location)
         draw_text(screen, total_costs, BLACK, total_costs_location)

@@ -197,9 +197,12 @@ switch pairs algorithm")
         """
         progress_bar = Progress()
 
+
         if self.choices.breath:
+            self.grid.cost_setting = "shared-costs"
             breath_first_greedy_fast(self.grid, self.choices.m, progress_bar)
         elif self.choices.dijkstra:
+            self.grid.cost_setting = "shared-costs"
             dijkstra_from_battery(self.grid)
 
     def get_selected_options(self) -> str:
@@ -280,8 +283,10 @@ switch pairs algorithm")
                     pass
 
             if self.choices.breath:
+                grid.cost_setting = "shared-costs"
                 breath_first_greedy_slow(grid, self.choices.m)
             elif self.choices.dijkstra:
+                grid.cost_setting = "shared-costs"
                 dijkstra_from_battery(grid)
 
             current_cost = grid.calc_costs()

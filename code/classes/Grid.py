@@ -44,6 +44,7 @@ class Grid:
         self.cable_costs: int = 9
         self.battery_costs: int = 5000
         self.district: int = district
+        self.cost_setting = "costs-own"
 
     def load_houses(self, file_path: str) -> None:
         """
@@ -144,7 +145,7 @@ class Grid:
 
             district_data: dict = dict()
             district_data["district"] = self.district
-            district_data["costs-own"] = self.calc_costs()
+            district_data[self.cost_setting] = self.calc_costs()
 
             data.append(district_data)
 
